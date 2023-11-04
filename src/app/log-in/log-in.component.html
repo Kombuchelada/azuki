@@ -1,0 +1,21 @@
+<div [formGroup]="logInForm">
+    <div class="w-full pb-2">
+        <label for="email">Email</label>
+        <input class="w-full" type="email" formControlName="email" id="email" required>
+        <div *ngIf="email.invalid && (email.dirty || email.touched)">
+            <small>test!</small>
+            <small *ngIf="email.errors?.['required']">
+                Email is required.
+            </small>
+            <small *ngIf="email.errors?.['email']">
+                Email must be a valid email.
+            </small>
+        </div>
+    </div>
+    <div class="w-full pb-2">
+        <label for="password">Password</label>
+        <input class="w-full" type="password" formControlName="password" id="password" required>
+        <small *ngIf="password.dirty">password dirty</small>
+    </div>
+    <button type="button" (click)="logIn()">Submit</button>
+</div>
