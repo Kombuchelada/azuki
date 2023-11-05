@@ -6,11 +6,22 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-log-in',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatIconModule,
+    MatButtonModule,
+  ],
   templateUrl: './log-in.component.html',
   styleUrls: ['./log-in.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -33,6 +44,7 @@ export class LogInComponent {
   }
 
   async logIn(): Promise<void> {
+    console.log('attempting log in');
     if (this.logInForm.invalid) {
       return;
     }

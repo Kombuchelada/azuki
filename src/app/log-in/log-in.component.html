@@ -1,40 +1,41 @@
-<div [formGroup]="logInForm" class="container mx-auto">
-  <div class="w-full field">
-    <label for="email">Email</label>
+<h1>Log In</h1>
+<form [formGroup]="logInForm" (ngSubmit)="logIn()">
+  <mat-form-field class="w-full">
+    <mat-label>Email</mat-label>
     <input
+      matInput
+      placeholder="Email"
       class="w-full"
       type="email"
-      formControlName="email"
+      [formControl]="email"
       id="email"
       required
     />
-    <div
-      class="form-errors"
-      *ngIf="email.invalid && (email.dirty || email.touched)"
-    >
-      <small class="block"> Email is required. </small>
-      <small *ngIf="email.errors?.['email']">
+    <div *ngIf="email.invalid && (email.dirty || email.touched)">
+      <mat-error *ngIf="email.errors?.['required']">
+        Email is required.
+      </mat-error>
+      <mat-error *ngIf="email.errors?.['email']">
         Email must be a valid email.
-      </small>
+      </mat-error>
     </div>
-  </div>
-  <div class="w-full field">
-    <label for="password">Password</label>
+  </mat-form-field>
+  <mat-form-field class="w-full">
+    <mat-label>Password</mat-label>
     <input
+      matInput
+      placeholder="Password"
       class="w-full"
       type="password"
-      formControlName="password"
+      [formControl]="password"
       id="password"
       required
     />
-    <div
-      class="form-errors"
-      *ngIf="password.invalid && (password.dirty || password.touched)"
-    >
-      <small *ngIf="password.errors?.['required']">
+    <div *ngIf="password.invalid && (password.dirty || password.touched)">
+      <mat-error *ngIf="password.errors?.['required']">
         Password is required.
-      </small>
+      </mat-error>
     </div>
-  </div>
-  <button type="button" (click)="logIn()">Submit</button>
-</div>
+  </mat-form-field>
+  <button mat-raised-button color="primary" type="submit">Submit</button>
+</form>
