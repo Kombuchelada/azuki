@@ -17,7 +17,10 @@ import {
 })
 export class LogInComponent {
   logInForm = new FormGroup({
-    email: new FormControl('', [Validators.email, Validators.required]),
+    email: new FormControl('', {
+      validators: [Validators.email, Validators.required],
+      updateOn: 'blur',
+    }),
     password: new FormControl('', [Validators.required]),
   });
 

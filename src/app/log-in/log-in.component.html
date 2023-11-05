@@ -1,21 +1,40 @@
 <div [formGroup]="logInForm">
-    <div class="w-full pb-2">
-        <label for="email">Email</label>
-        <input class="w-full" type="email" formControlName="email" id="email" required>
-        <div *ngIf="email.invalid && (email.dirty || email.touched)">
-            <small>test!</small>
-            <small *ngIf="email.errors?.['required']">
-                Email is required.
-            </small>
-            <small *ngIf="email.errors?.['email']">
-                Email must be a valid email.
-            </small>
-        </div>
+  <div class="w-full field">
+    <label for="email">Email</label>
+    <input
+      class="w-full"
+      type="email"
+      formControlName="email"
+      id="email"
+      required
+    />
+    <div
+      class="form-errors"
+      *ngIf="email.invalid && (email.dirty || email.touched)"
+    >
+      <small class="block"> Email is required. </small>
+      <small *ngIf="email.errors?.['email']">
+        Email must be a valid email.
+      </small>
     </div>
-    <div class="w-full pb-2">
-        <label for="password">Password</label>
-        <input class="w-full" type="password" formControlName="password" id="password" required>
-        <small *ngIf="password.dirty">password dirty</small>
+  </div>
+  <div class="w-full field">
+    <label for="password">Password</label>
+    <input
+      class="w-full"
+      type="password"
+      formControlName="password"
+      id="password"
+      required
+    />
+    <div
+      class="form-errors"
+      *ngIf="password.invalid && (password.dirty || password.touched)"
+    >
+      <small *ngIf="password.errors?.['required']">
+        Password is required.
+      </small>
     </div>
-    <button type="button" (click)="logIn()">Submit</button>
+  </div>
+  <button type="button" (click)="logIn()">Submit</button>
 </div>

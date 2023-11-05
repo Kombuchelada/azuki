@@ -14,3 +14,27 @@ html {
 *:after {
   box-sizing: inherit;
 }
+
+.form-errors {
+  @apply bg-red-800 rounded p-2 bg-opacity-75;
+}
+
+.form-errors > small {
+  display: block;
+}
+
+.field {
+  @apply pb-2;
+}
+
+.field > label {
+  display: block;
+}
+
+.field input {
+  @apply my-2;
+}
+
+dialog {
+  @apply rounded-lg border-indigo-950 shadow-lg;
+}
