@@ -14,6 +14,11 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'log-in',
+    loadComponent: () =>
+      import('./log-in/log-in.component').then((mod) => mod.LogInComponent),
+  },
+  {
     path: '',
     redirectTo: 'home',
     pathMatch: 'prefix',
