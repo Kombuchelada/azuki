@@ -10,6 +10,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { take } from 'rxjs';
+import { SupabaseService } from '../services/supabase.service';
 
 @Component({
   selector: 'app-log-in',
@@ -43,36 +45,19 @@ export class LogInComponent {
     return this.logInForm.controls.password;
   }
 
+  constructor(private supabase: SupabaseService) {}
+
   async logIn(): Promise<void> {
-    console.log('attempting log in');
     if (this.logInForm.invalid) {
       return;
     }
-    // const { email, password } = this.logInForm.getRawValue();
-    // try {
-    //   const { data, error } = await this.supabase.logIn(email, password);
-    //   if (error) {
-    //     throw error;
-    //   } else {
-    //     this.toastService.addToast({
-    //       severity: ToastSeverity.SUCCESS,
-    //       header: 'Success',
-    //       body: `Welcome back!`,
-    //       timeToLiveMilliseconds: 5000,
-    //     });
-    //     this.close.emit();
-    //   }
-    // } catch (error) {
-    //   if (error instanceof Error) {
-    //     console.log(error.message);
-    //     // switch (error.message) {
-    //     //   case this.UNAME_EXISTS:
-    //     //     this.username.setErrors({ exists: true });
-    //     //     break;
-    //     //   default:
-    //     //     break;
-    //     // }
-    //   }
-    // }
+    const { email, password } = this.logInForm.getRawValue();
+    if (email === null && password === null) {
+      return;
+    }
+    this.supabase
+      .logIn(email as string, password as string)
+      .pipe(take(1))
+      .subscribe((response) => console.log(response));
   }
 }

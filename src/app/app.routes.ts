@@ -19,6 +19,11 @@ export const routes: Routes = [
       import('./log-in/log-in.component').then((mod) => mod.LogInComponent),
   },
   {
+    path: 'account',
+    loadComponent: () =>
+      import('./account/account.component').then((mod) => mod.AccountComponent),
+  },
+  {
     path: '',
     redirectTo: 'home',
     pathMatch: 'prefix',

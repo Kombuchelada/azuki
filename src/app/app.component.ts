@@ -3,6 +3,9 @@ import { CommonModule } from '@angular/common';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { SupabaseService } from './services/supabase.service';
+import { from } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -13,6 +16,7 @@ import { MatButtonModule } from '@angular/material/button';
     MatToolbarModule,
     RouterLink,
     MatButtonModule,
+    MatIconModule,
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
@@ -20,4 +24,7 @@ import { MatButtonModule } from '@angular/material/button';
 })
 export class AppComponent {
   title = 'azuki';
+  // loggedIn$ = from(this.supabase.authChanges())
+
+  constructor(private supabase: SupabaseService) {}
 }
