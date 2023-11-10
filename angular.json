@@ -96,10 +96,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "azuki:build:production"
+              "buildTarget": "azuki:build:production"
             },
             "development": {
-              "browserTarget": "azuki:build:development"
+              "buildTarget": "azuki:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -107,7 +107,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "azuki:build"
+            "buildTarget": "azuki:build"
           }
         },
         "test": {
