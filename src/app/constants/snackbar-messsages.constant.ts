@@ -5,4 +5,6 @@ export const enum SNACKBAR_MESSAGES {
   WELCOME = 'Welcome back!',
   AUTH_ERROR = 'There was an authentication error. Please try again.',
   LOGGED_OUT = 'You were successfully logged out.',
+  SUBMISSION_FAILED = 'Form submission failed. Please try again.',
+  PROFILE_UPDATED = 'Your account info was successfully updated',
 }

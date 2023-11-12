@@ -1,18 +1,20 @@
-<mat-toolbar id="navbar" color="primary">
-  <div class="flex w-full justify-between items-center">
-    <a mat-button routerLink="/home">Azuki</a>
-    <div class="flex gap-2 items-center">
-      <span>{{ username() }}</span>
-      <button
-        mat-icon-button
-        [matMenuTriggerFor]="menu"
-        aria-label="Account button"
-      >
-        <mat-icon>account_circle</mat-icon>
-      </button>
+<div class="pb-4">
+  <mat-toolbar id="navbar" color="primary">
+    <div class="flex w-full justify-between items-center">
+      <a mat-button routerLink="/home">Azuki</a>
+      <div class="flex gap-2 items-center">
+        <span>{{ username() }}</span>
+        <button
+          mat-icon-button
+          [matMenuTriggerFor]="menu"
+          aria-label="Account button"
+        >
+          <mat-icon>account_circle</mat-icon>
+        </button>
+      </div>
     </div>
-  </div>
-</mat-toolbar>
+  </mat-toolbar>
+</div>
 <mat-menu #menu>
   @if(loggedIn()){
   <button mat-menu-item routerLink="/account">

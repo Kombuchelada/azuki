@@ -24,6 +24,13 @@ export const routes: Routes = [
       import('./account/account.component').then((mod) => mod.AccountComponent),
   },
   {
+    path: 'account/edit',
+    loadComponent: () =>
+      import('./account-edit/account-edit.component').then(
+        (mod) => mod.AccountEditComponent
+      ),
+  },
+  {
     path: '',
     redirectTo: 'home',
     pathMatch: 'prefix',

@@ -8,7 +8,6 @@ import {
   PostgrestSingleResponse,
   Session,
   SupabaseClient,
-  User,
 } from '@supabase/supabase-js';
 import { from, Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
@@ -60,13 +59,13 @@ export class SupabaseService {
     return from(this.supabase.auth.signOut());
   }
 
-  updateProfile(profile: Profile) {
+  updateProfile(profile: Profile): Observable<PostgrestSingleResponse<null>> {
     const update = {
       ...profile,
       updated_at: new Date(),
     };
 
-    return this.supabase.from('profiles').upsert(update);
+    return from(this.supabase.from('profiles').upsert(update));
   }
 
   downLoadImage(path: string) {
