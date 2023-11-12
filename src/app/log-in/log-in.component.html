@@ -1,5 +1,5 @@
 <h1>Log In</h1>
-<form [formGroup]="logInForm" (ngSubmit)="logIn()">
+<form [formGroup]="logInForm" (ngSubmit)="loggingIn$.next(true)">
   <mat-form-field class="w-full">
     <mat-label>Email</mat-label>
     <input
@@ -11,14 +11,11 @@
       id="email"
       required
     />
-    <div *ngIf="email.invalid && (email.dirty || email.touched)">
-      <mat-error *ngIf="email.errors?.['required']">
-        Email is required.
-      </mat-error>
-      <mat-error *ngIf="email.errors?.['email']">
-        Email must be a valid email.
-      </mat-error>
-    </div>
+    @if (email.errors?.['required']) {
+    <mat-error> Email is required. </mat-error>
+    } @if (email.errors?.['email']) {
+    <mat-error> Email must be a valid email. </mat-error>
+    }
   </mat-form-field>
   <mat-form-field class="w-full">
     <mat-label>Password</mat-label>
@@ -31,11 +28,11 @@
       id="password"
       required
     />
-    <div *ngIf="password.invalid && (password.dirty || password.touched)">
-      <mat-error *ngIf="password.errors?.['required']">
-        Password is required.
-      </mat-error>
-    </div>
+    @if (password.errors?.['required']) {
+    <mat-error> Password is required. </mat-error>
+    }
   </mat-form-field>
-  <button mat-raised-button color="primary" type="submit">Submit</button>
+  <button mat-raised-button color="primary" type="submit" class="mt-4">
+    Submit
+  </button>
 </form>
