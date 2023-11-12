@@ -6,12 +6,12 @@ import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 import { SupabaseService } from '../services/supabase.service';
-import { from, map, take, takeUntil } from 'rxjs';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { map, take } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SNACKBAR_MESSAGES } from '../constants/snackbar-messsages.constant';
 import { SNACKBAR_ACTIONS } from '../constants/snackbar-actions.constant';
 import { SNACKBAR_DURATIONS } from '../constants/snackbar-durations.constant';
+import { USER_METADATA } from '../constants/user-metadata-properties.constant';
 
 @Component({
   selector: 'app-toolbar',
@@ -31,6 +31,7 @@ import { SNACKBAR_DURATIONS } from '../constants/snackbar-durations.constant';
 export class ToolbarComponent {
   title = 'azuki';
   loggedIn = signal(false);
+  username = signal('');
 
   constructor(
     private supabase: SupabaseService,
@@ -39,15 +40,31 @@ export class ToolbarComponent {
     this.supabase.authChanges((authEvent) => {
       switch (authEvent) {
         case 'SIGNED_IN':
-          console.log('signed in');
           this.loggedIn.set(true);
           break;
         case 'SIGNED_OUT':
-          console.log('signed out');
           this.loggedIn.set(false);
           break;
       }
+      this.updateSession();
     });
+  }
+
+  private updateSession(): void {
+    this.supabase.session
+      .pipe(
+        take(1),
+        map((session) => {
+          if (session) {
+            this.username.set(
+              session.user.user_metadata[USER_METADATA.USERNAME]
+            );
+          } else {
+            this.username.set('');
+          }
+        })
+      )
+      .subscribe();
   }
 
   logOut(): void {

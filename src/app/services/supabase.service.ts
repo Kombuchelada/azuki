@@ -33,11 +33,12 @@ export class SupabaseService {
     );
   }
 
-  get session(): AuthSession | null {
-    this.supabase.auth.getSession().then(({ data }) => {
-      this._session = data.session;
-    });
-    return this._session;
+  get session(): Observable<AuthSession | null> {
+    return from(
+      this.supabase.auth.getSession().then(({ data }) => {
+        return data.session;
+      })
+    );
   }
 
   profile(user: User) {
