@@ -1,6 +1,7 @@
 <mat-toolbar id="navbar" color="primary">
   <div class="flex w-full justify-between items-center">
     <a mat-button routerLink="/home">Azuki</a>
+    {{ loggedIn() }}
     <button
       mat-icon-button
       [matMenuTriggerFor]="menu"
@@ -11,12 +12,19 @@
   </div>
 </mat-toolbar>
 <mat-menu #menu>
+  @if(loggedIn()){
   <button mat-menu-item routerLink="/account">
     <mat-icon>person</mat-icon>
     <span>Account Details</span>
   </button>
-  <button mat-menu-item disabled>
+  <button mat-menu-item (click)="logOut()">
     <mat-icon>logout</mat-icon>
     <span>Logout</span>
   </button>
+  } @else {
+  <button mat-menu-item routerLink="/log-in">
+    <mat-icon>login</mat-icon>
+    <span>Log In</span>
+  </button>
+  }
 </mat-menu>

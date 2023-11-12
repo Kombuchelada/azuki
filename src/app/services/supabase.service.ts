@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import {
   AuthChangeEvent,
+  AuthError,
   AuthSession,
   AuthTokenResponse,
   createClient,
@@ -57,8 +58,8 @@ export class SupabaseService {
     return from(this.supabase.auth.signInWithPassword({ email, password }));
   }
 
-  signOut() {
-    return this.supabase.auth.signOut();
+  signOut(): Observable<{ error: AuthError | null }> {
+    return from(this.supabase.auth.signOut());
   }
 
   updateProfile(profile: Profile) {
