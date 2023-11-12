@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { SupabaseService } from '../services/supabase.service';
 import { Profile } from '../models/profile.model';
 import { map, of, switchMap } from 'rxjs';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-account',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, MatProgressSpinnerModule],
   templateUrl: './account.component.html',
   styleUrls: ['./account.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,

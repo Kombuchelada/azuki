@@ -1,4 +1,10 @@
+@if(profile() === null){
+<h2>Loading Profile</h2>
+<mat-spinner></mat-spinner>
+<!-- TODO: make skeleton once page format is set -->
+} @else {
 <div>ID: {{ profile()?.id }}</div>
 <div>Username: {{ profile()?.username }}</div>
 <div>Full Name: {{ profile()?.full_name }}</div>
 <div>Avatar URL: {{ profile()?.avatar_url }}</div>
+}
