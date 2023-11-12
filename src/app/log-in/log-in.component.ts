@@ -14,7 +14,6 @@ import { MatButtonModule } from '@angular/material/button';
 import {
   Observable,
   Subject,
-  delay,
   filter,
   map,
   of,
@@ -31,6 +30,8 @@ import { SNACKBAR_MESSAGES } from '../constants/snackbar-messsages.constant';
 import { SNACKBAR_ACTIONS } from '../constants/snackbar-actions.constant';
 import { SNACKBAR_DURATIONS } from '../constants/snackbar-durations.constant';
 import { LOADING_DIALOG } from '../constants/loading-dialog.constant';
+import { Router } from '@angular/router';
+import { ROUTES } from '../constants/routes.constant';
 
 @Component({
   selector: 'app-log-in',
@@ -100,14 +101,18 @@ export class LogInComponent {
         );
         return;
       }
-      console.log(tokenResponse);
       if (tokenResponse.error) {
         this.snackBar.open(
           tokenResponse.error.message,
           SNACKBAR_ACTIONS.DISMISS,
           { duration: SNACKBAR_DURATIONS.DEFAULT }
         );
+        return;
       }
+      this.snackBar.open(SNACKBAR_MESSAGES.WELCOME, SNACKBAR_ACTIONS.DISMISS, {
+        duration: SNACKBAR_DURATIONS.DEFAULT,
+      });
+      this.router.navigate([ROUTES.HOME]);
     })
   );
 
@@ -116,7 +121,8 @@ export class LogInComponent {
   constructor(
     private supabase: SupabaseService,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private router: Router
   ) {
     this.logIn$.pipe(takeUntilDestroyed()).subscribe();
   }
