@@ -1,6 +1,8 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SupabaseService } from '../services/supabase.service';
+import { Profile } from '../models/profile.model';
+import { map, of, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-account',
@@ -11,5 +13,23 @@ import { SupabaseService } from '../services/supabase.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AccountComponent {
-  constructor(private supabase: SupabaseService) {}
+  profile = signal<Profile | null>(null);
+
+  constructor(private supabase: SupabaseService) {
+    this.supabase.session
+      .pipe(
+        switchMap((session) => {
+          if (session) {
+            return this.supabase.profile(session.user.id);
+          }
+          return of(null);
+        }),
+        map((profile) => {
+          if (profile) {
+            this.profile.set(profile.data);
+          }
+        })
+      )
+      .subscribe();
+  }
 }

@@ -5,19 +5,14 @@ import {
   AuthSession,
   AuthTokenResponse,
   createClient,
+  PostgrestSingleResponse,
   Session,
   SupabaseClient,
   User,
 } from '@supabase/supabase-js';
 import { from, Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
-
-export interface Profile {
-  id?: string;
-  username: string;
-  website: string;
-  avatar_url: string;
-}
+import { Profile } from '../models/profile.model';
 
 @Injectable({
   providedIn: 'root',
@@ -41,12 +36,14 @@ export class SupabaseService {
     );
   }
 
-  profile(user: User) {
-    return this.supabase
-      .from('profiles')
-      .select(`id, username, full_name`)
-      .eq('id', user.id)
-      .single();
+  profile(id: string): Observable<PostgrestSingleResponse<Profile>> {
+    return from(
+      this.supabase
+        .from('profiles')
+        .select(`id, username, full_name, avatar_url`)
+        .eq('id', id)
+        .single()
+    );
   }
 
   authChanges(
