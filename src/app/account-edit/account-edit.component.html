@@ -20,6 +20,23 @@
     >
     }
   </mat-form-field>
+  <div>
+    <label for="avatar" class="w-full block">Avatar</label>
+    <input
+      #avatarInput
+      (change)="fileUploaded($event)"
+      type="file"
+      placeholder="Upload a file"
+      id="avatar"
+      accept="image/png, image/jpeg"
+    />
+    <img
+      #avatarPreview
+      alt="avatar preview"
+      class="clip-path-circle"
+      width="50px"
+    />
+  </div>
   <button mat-raised-button color="primary" type="submit" class="mt-4">
     Submit
   </button>

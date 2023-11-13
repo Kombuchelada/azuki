@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  ViewChild,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   switchMap,
@@ -45,18 +51,26 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AccountEditComponent {
+  @ViewChild('avatarPreview') avatarPreview!: ElementRef<HTMLImageElement>;
   profile = signal<Profile | null>(null);
   session = signal<Session | null>(null);
 
+  //this only has 1 control right now but that will likely change,
+  //so I'm leaving it as a formgroup
   profileForm = new FormGroup({
     fullName: new FormControl('', [
       Validators.required,
       Validators.maxLength(255),
     ]),
+    avatar: new FormControl<File | null>(null),
   });
 
   get fullName(): FormControl<string | null> {
     return this.profileForm.controls.fullName;
+  }
+
+  get avatar(): FormControl<File | null> {
+    return this.profileForm.controls.avatar;
   }
 
   submitting$ = new Subject<boolean>();
@@ -130,6 +144,34 @@ export class AccountEditComponent {
       .subscribe();
 
     this.submitForm$.pipe(takeUntilDestroyed()).subscribe();
+    this.avatar.valueChanges
+      .pipe(
+        takeUntilDestroyed(),
+        map((file) => {
+          if (!file) {
+            return;
+          }
+          console.log(file);
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            if (!e || !e.target) {
+              return;
+            }
+            this.avatarPreview.nativeElement.src = e.target.result as string;
+          };
+          reader.readAsDataURL(file);
+        })
+      )
+      .subscribe();
+  }
+
+  fileUploaded(fileUploadEvent: Event): void {
+    const target = fileUploadEvent.target as HTMLInputElement;
+    if (!target || !target.files || !target.files[0]) {
+      return;
+    }
+    this.avatar.setValue(target.files[0]);
+    console.log(fileUploadEvent);
   }
 
   private submitForm(): Observable<PostgrestSingleResponse<null> | null> {

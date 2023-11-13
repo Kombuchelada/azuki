@@ -51,3 +51,7 @@ body {
 .min-w-25dvw {
   min-width: 25dvw;
 }
+
+.clip-path-circle {
+  clip-path: circle();
+}
