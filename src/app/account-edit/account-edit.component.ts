@@ -34,6 +34,7 @@ import { SNACKBAR_ACTIONS } from '../constants/snackbar-actions.constant';
 import { SNACKBAR_DURATIONS } from '../constants/snackbar-durations.constant';
 import { SNACKBAR_MESSAGES } from '../constants/snackbar-messsages.constant';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ImageUploadComponent } from '../image-upload/image-upload.component';
 
 @Component({
   selector: 'app-account-edit',
@@ -45,6 +46,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     MatInputModule,
     MatIconModule,
     MatButtonModule,
+    ImageUploadComponent,
   ],
   templateUrl: './account-edit.component.html',
   styleUrl: './account-edit.component.css',
@@ -89,6 +91,7 @@ export class AccountEditComponent {
       }
       return true;
     }),
+    switchMap(() => this.uploadAvatar()),
     switchMap(() => this.submitForm()),
     tap(() => this.submitting$.next(false)),
     map((response) => {
@@ -144,34 +147,6 @@ export class AccountEditComponent {
       .subscribe();
 
     this.submitForm$.pipe(takeUntilDestroyed()).subscribe();
-    this.avatar.valueChanges
-      .pipe(
-        takeUntilDestroyed(),
-        map((file) => {
-          if (!file) {
-            return;
-          }
-          console.log(file);
-          const reader = new FileReader();
-          reader.onload = (e) => {
-            if (!e || !e.target) {
-              return;
-            }
-            this.avatarPreview.nativeElement.src = e.target.result as string;
-          };
-          reader.readAsDataURL(file);
-        })
-      )
-      .subscribe();
-  }
-
-  fileUploaded(fileUploadEvent: Event): void {
-    const target = fileUploadEvent.target as HTMLInputElement;
-    if (!target || !target.files || !target.files[0]) {
-      return;
-    }
-    this.avatar.setValue(target.files[0]);
-    console.log(fileUploadEvent);
   }
 
   private submitForm(): Observable<PostgrestSingleResponse<null> | null> {
@@ -181,5 +156,17 @@ export class AccountEditComponent {
     }
     newProfile.full_name = this.fullName.value as string;
     return this.supabase.updateProfile(newProfile);
+  }
+
+  private uploadAvatar() {
+    const profile = this.profile();
+    if (!this.avatar.value || !profile || !profile.id) {
+      return of(null);
+    }
+
+    const file = this.avatar.value;
+    const fileExt = file.name.split('.').pop();
+    const fileName = `public/${profile.id}.${fileExt}`;
+    return this.supabase.uploadAvatar(fileName, file);
   }
 }

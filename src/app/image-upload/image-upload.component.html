@@ -1,0 +1,21 @@
+<div class="flex gap-5 items-start">
+  <button mat-button type="button" (click)="fileInput.click()">
+    {{ label }}
+  </button>
+  <img
+    [ngClass]="showPreview() ? '' : 'hidden'"
+    #filePreview
+    alt="avatar preview"
+    class="clip-path-circle"
+    width="125px"
+  />
+</div>
+<input
+  #fileInput
+  hidden
+  (change)="fileUploaded($event)"
+  type="file"
+  placeholder="Upload a file"
+  id="imgInput"
+  accept="image/png, image/jpeg"
+/>

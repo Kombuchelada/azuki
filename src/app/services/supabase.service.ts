@@ -72,7 +72,13 @@ export class SupabaseService {
     return this.supabase.storage.from('avatars').download(path);
   }
 
+  // StorageError doesn't seem to be exposed in the supabase api,
+  // and if its a postgrest error I can't find that one either so I've
+  // left the return type implied for now.
   uploadAvatar(filePath: string, file: File) {
-    return this.supabase.storage.from('avatars').upload(filePath, file);
+    console.log('uploading');
+    console.log(filePath);
+    console.log(file);
+    return from(this.supabase.storage.from('avatars').upload(filePath, file));
   }
 }
