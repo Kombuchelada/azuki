@@ -12,9 +12,26 @@
       (load)="imageLoaded.set(true)"
     />
   </div>
-  <button mat-button type="button" (click)="fileInput.click()">
-    {{ label }}
-  </button>
+  <div class="flex gap-3">
+    <button
+      mat-raised-button
+      color="accent"
+      type="button"
+      (click)="fileInput.click()"
+    >
+      {{ label }}
+    </button>
+    @if(avatarUrl.length > 0){
+    <button
+      mat-raised-button
+      color="warn"
+      type="button"
+      (click)="fileSelected.emit(null)"
+    >
+      DELETE
+    </button>
+    }
+  </div>
 </div>
 <input
   #fileInput

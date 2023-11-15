@@ -15,7 +15,6 @@ import {
   filter,
   tap,
   Observable,
-  merge,
   forkJoin,
 } from 'rxjs';
 import { Profile } from '../models/profile.model';
@@ -186,6 +185,15 @@ export class AccountEditComponent {
       .subscribe();
 
     this.submitForm$.pipe(takeUntilDestroyed()).subscribe();
+  }
+
+  fileSelected(newFile: File): void {
+    if (newFile) {
+      this.avatarFile.setValue(newFile);
+      return;
+    }
+    this.avatarFile.setValue(null);
+    this.avatarUrl.setValue('');
   }
 
   private submitForm(): Observable<PostgrestSingleResponse<null> | null> {

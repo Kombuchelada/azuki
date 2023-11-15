@@ -30,7 +30,7 @@ export class ImageUploadComponent implements OnChanges, AfterViewInit {
   @ViewChild('filePreview') filePreview!: ElementRef<HTMLImageElement>;
   @Input() label = TEMPLATE_STRINGS.AVATAR_LABEL;
   @Input() avatarUrl: string = '';
-  @Output() fileSelected = new EventEmitter<File>();
+  @Output() fileSelected = new EventEmitter<File | null>();
   imageLoaded = signal(false);
 
   constructor(private supabase: SupabaseService) {}
@@ -62,8 +62,11 @@ export class ImageUploadComponent implements OnChanges, AfterViewInit {
   }
 
   private showImage(): void {
-    if (this.avatarUrl.length === 0 || !this.filePreview) {
+    if (!this.filePreview) {
       return;
+    }
+    if (this.avatarUrl.length === 0) {
+      this.filePreview.nativeElement.src = '';
     }
     this.filePreview.nativeElement.src = this.supabase.getFullUrl(
       BUCKETS.AVATARS,
