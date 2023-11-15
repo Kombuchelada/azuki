@@ -1,29 +1,31 @@
 <h1>Edit Account</h1>
 <form [formGroup]="profileForm" (ngSubmit)="submitting$.next(true)">
-  <mat-form-field class="w-full">
-    <mat-label for="fullName">Full Name</mat-label>
-    <input
-      matInput
-      placeholder="Full Name"
-      class="w-full"
-      type="text"
-      [formControl]="fullName"
-      id="fullName"
-      required
-    />
-    @if (fullName.errors?.['required']) {
-    <mat-error>Full Name is required. </mat-error>
-    } @if (fullName.errors?.['maxlength']) {
-    <mat-error
-      >Names cannot be more than 255 characters. You are currently at
-      {{ fullName.value?.length }}</mat-error
-    >
-    }
-  </mat-form-field>
-  <app-image-upload
-    label="Upload a new avatar"
-    (fileSelected)="avatar.setValue($event)"
-  ></app-image-upload>
+  <div class="flex gap-5 flex-wrap items-start">
+    <app-image-upload
+      (fileSelected)="avatarFile.setValue($event)"
+      [avatarUrl]="avatarUrl.value"
+    ></app-image-upload>
+    <mat-form-field class="flex-grow">
+      <mat-label for="fullName">Full Name</mat-label>
+      <input
+        matInput
+        placeholder="Full Name"
+        class="w-full"
+        type="text"
+        [formControl]="fullName"
+        id="fullName"
+        required
+      />
+      @if (fullName.errors?.['required']) {
+      <mat-error>Full Name is required. </mat-error>
+      } @if (fullName.errors?.['maxlength']) {
+      <mat-error
+        >Names cannot be more than 255 characters. You are currently at
+        {{ fullName.value?.length }}</mat-error
+      >
+      }
+    </mat-form-field>
+  </div>
   <button mat-raised-button color="primary" type="submit" class="mt-4">
     Submit
   </button>

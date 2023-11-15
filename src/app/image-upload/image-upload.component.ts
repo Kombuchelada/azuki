@@ -1,30 +1,49 @@
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
   ElementRef,
   EventEmitter,
   Input,
+  OnChanges,
   Output,
+  SimpleChanges,
   ViewChild,
   signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
+import { TEMPLATE_STRINGS } from '../constants/template.constant';
+import { SupabaseService } from '../services/supabase.service';
+import { BUCKETS } from '../constants/buckets.constant';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-image-upload',
   standalone: true,
-  imports: [CommonModule, MatButtonModule],
+  imports: [CommonModule, MatButtonModule, MatIconModule],
   templateUrl: './image-upload.component.html',
   styleUrl: './image-upload.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ImageUploadComponent {
+export class ImageUploadComponent implements OnChanges, AfterViewInit {
   @ViewChild('filePreview') filePreview!: ElementRef<HTMLImageElement>;
-  @Input() label!: string;
+  @Input() label = TEMPLATE_STRINGS.AVATAR_LABEL;
+  @Input() avatarUrl: string = '';
   @Output() fileSelected = new EventEmitter<File>();
+  imageLoaded = signal(false);
 
-  showPreview = signal(false);
+  constructor(private supabase: SupabaseService) {}
+
+  ngAfterViewInit(): void {
+    this.showImage();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['avatarUrl'] && this.filePreview?.nativeElement) {
+      this.showImage();
+    }
+  }
 
   fileUploaded(fileUploadEvent: Event): void {
     const target = fileUploadEvent.target as HTMLInputElement;
@@ -40,6 +59,15 @@ export class ImageUploadComponent {
     };
     reader.readAsDataURL(target.files[0]);
     this.fileSelected.emit(target.files[0]);
-    this.showPreview.set(true);
+  }
+
+  private showImage(): void {
+    if (this.avatarUrl.length === 0 || !this.filePreview) {
+      return;
+    }
+    this.filePreview.nativeElement.src = this.supabase.getFullUrl(
+      BUCKETS.AVATARS,
+      this.avatarUrl
+    );
   }
 }

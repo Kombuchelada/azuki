@@ -12,6 +12,7 @@ import {
 import { from, Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Profile } from '../models/profile.model';
+import { BUCKETS } from '../constants/buckets.constant';
 
 @Injectable({
   providedIn: 'root',
@@ -69,7 +70,7 @@ export class SupabaseService {
   }
 
   downLoadImage(path: string) {
-    return this.supabase.storage.from('avatars').download(path);
+    return from(this.supabase.storage.from('avatars').download(path));
   }
 
   // StorageError doesn't seem to be exposed in the supabase api,
@@ -80,5 +81,10 @@ export class SupabaseService {
     console.log(filePath);
     console.log(file);
     return from(this.supabase.storage.from('avatars').upload(filePath, file));
+  }
+
+  getFullUrl(bucketName: BUCKETS, path: string): string {
+    return this.supabase.storage.from(bucketName).getPublicUrl(path).data
+      .publicUrl;
   }
 }

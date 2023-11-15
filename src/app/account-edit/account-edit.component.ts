@@ -15,6 +15,8 @@ import {
   filter,
   tap,
   Observable,
+  merge,
+  forkJoin,
 } from 'rxjs';
 import { Profile } from '../models/profile.model';
 import { SupabaseService } from '../services/supabase.service';
@@ -35,6 +37,7 @@ import { SNACKBAR_DURATIONS } from '../constants/snackbar-durations.constant';
 import { SNACKBAR_MESSAGES } from '../constants/snackbar-messsages.constant';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ImageUploadComponent } from '../image-upload/image-upload.component';
+import { HTTP_STATUS_CODES } from '../constants/http-status-codes.constant';
 
 @Component({
   selector: 'app-account-edit',
@@ -64,15 +67,20 @@ export class AccountEditComponent {
       Validators.required,
       Validators.maxLength(255),
     ]),
-    avatar: new FormControl<File | null>(null),
+    avatarUrl: new FormControl<string>('', { nonNullable: true }),
+    avatarFile: new FormControl<File | null>(null),
   });
 
   get fullName(): FormControl<string | null> {
     return this.profileForm.controls.fullName;
   }
 
-  get avatar(): FormControl<File | null> {
-    return this.profileForm.controls.avatar;
+  get avatarUrl(): FormControl<string> {
+    return this.profileForm.controls.avatarUrl;
+  }
+
+  get avatarFile(): FormControl<File | null> {
+    return this.profileForm.controls.avatarFile;
   }
 
   submitting$ = new Subject<boolean>();
@@ -92,6 +100,33 @@ export class AccountEditComponent {
       return true;
     }),
     switchMap(() => this.uploadAvatar()),
+    map((uploadResult) => {
+      console.log(uploadResult);
+      if (uploadResult) {
+        const fileName = uploadResult[0].fileName;
+        const uploadResponse = uploadResult[1];
+        if (uploadResponse.error) {
+          //there is an error in the supabase typing. the error object has a
+          //status code.
+          const statusCode = (
+            uploadResponse.error as unknown as { statusCode: string }
+          ).statusCode;
+          if (statusCode === HTTP_STATUS_CODES.CONFLICT_409) {
+            this.avatarUrl.setValue(fileName);
+          } else {
+            this.snackBar.open(
+              `${SNACKBAR_MESSAGES.IMAGE_UPLOAD_FAILED}: ${uploadResponse.error}`,
+              SNACKBAR_ACTIONS.DISMISS,
+              { duration: SNACKBAR_DURATIONS.DEFAULT }
+            );
+          }
+        }
+        if (uploadResponse?.data?.path) {
+          this.avatarUrl.setValue(uploadResponse.data.path);
+          return;
+        }
+      }
+    }),
     switchMap(() => this.submitForm()),
     tap(() => this.submitting$.next(false)),
     map((response) => {
@@ -140,8 +175,12 @@ export class AccountEditComponent {
           if (profile?.data) {
             this.profile.set(profile.data);
             this.fullName.setValue(profile.data.full_name);
+            if (profile.data.avatar_url) {
+              this.avatarUrl.setValue(profile.data.avatar_url);
+            }
             this.profileForm.enable();
           }
+          return of(null);
         })
       )
       .subscribe();
@@ -155,18 +194,22 @@ export class AccountEditComponent {
       return of(null);
     }
     newProfile.full_name = this.fullName.value as string;
+    newProfile.avatar_url = this.avatarUrl.value as string;
     return this.supabase.updateProfile(newProfile);
   }
 
   private uploadAvatar() {
     const profile = this.profile();
-    if (!this.avatar.value || !profile || !profile.id) {
+    if (!this.avatarFile.value || !profile || !profile.id) {
       return of(null);
     }
 
-    const file = this.avatar.value;
+    const file = this.avatarFile.value;
     const fileExt = file.name.split('.').pop();
     const fileName = `public/${profile.id}.${fileExt}`;
-    return this.supabase.uploadAvatar(fileName, file);
+    return forkJoin([
+      of({ fileName: fileName }),
+      this.supabase.uploadAvatar(fileName, file),
+    ]);
   }
 }

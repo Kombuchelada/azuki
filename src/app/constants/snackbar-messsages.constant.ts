@@ -7,4 +7,5 @@ export const enum SNACKBAR_MESSAGES {
   LOGGED_OUT = 'You were successfully logged out.',
   SUBMISSION_FAILED = 'Form submission failed. Please try again.',
   PROFILE_UPDATED = 'Your account info was successfully updated',
+  IMAGE_UPLOAD_FAILED = 'There was an issue uploading your image. Please try again.',
 }
