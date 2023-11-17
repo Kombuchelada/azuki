@@ -7,7 +7,6 @@ import { MatButtonModule } from '@angular/material/button';
   selector: 'app-home',
   standalone: true,
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, RouterLink, MatButtonModule],
 })

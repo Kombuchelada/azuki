@@ -45,7 +45,6 @@ import { ROUTES } from '../constants/routes.constant';
     MatButtonModule,
   ],
   templateUrl: './log-in.component.html',
-  styleUrls: ['./log-in.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LogInComponent {

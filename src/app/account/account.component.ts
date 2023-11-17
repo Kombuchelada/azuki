@@ -11,7 +11,6 @@ import { RouterLink } from '@angular/router';
   standalone: true,
   imports: [CommonModule, MatProgressSpinnerModule, RouterLink],
   templateUrl: './account.component.html',
-  styleUrls: ['./account.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AccountComponent {

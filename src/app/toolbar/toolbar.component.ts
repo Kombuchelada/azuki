@@ -25,7 +25,6 @@ import { USER_METADATA } from '../constants/user-metadata-properties.constant';
     MatMenuModule,
   ],
   templateUrl: './toolbar.component.html',
-  styleUrl: './toolbar.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ToolbarComponent {

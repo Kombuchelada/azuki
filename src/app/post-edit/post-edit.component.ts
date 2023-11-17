@@ -7,7 +7,6 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './post-edit.component.html',
-  styleUrls: ['./post-edit.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PostEditComponent {

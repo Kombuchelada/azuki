@@ -23,7 +23,11 @@ import { MatIconModule } from '@angular/material/icon';
   standalone: true,
   imports: [CommonModule, MatButtonModule, MatIconModule],
   templateUrl: './image-upload.component.html',
-  styleUrl: './image-upload.component.css',
+  styles: `.image-icon-size {
+    height: 250px;
+    width: 250px;
+    font-size: 250px;
+  }`,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ImageUploadComponent implements OnChanges, AfterViewInit {

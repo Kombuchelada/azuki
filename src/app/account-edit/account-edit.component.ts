@@ -51,7 +51,6 @@ import { HTTP_STATUS_CODES } from '../constants/http-status-codes.constant';
     ImageUploadComponent,
   ],
   templateUrl: './account-edit.component.html',
-  styleUrl: './account-edit.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AccountEditComponent {
