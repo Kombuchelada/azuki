@@ -91,7 +91,6 @@ export class AccountEditComponent {
     }),
     switchMap(() => this.uploadAvatar()),
     map((uploadResult) => {
-      console.log(uploadResult);
       if (uploadResult) {
         const fileName = uploadResult[0].fileName;
         const uploadResponse = uploadResult[1];

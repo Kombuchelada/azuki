@@ -77,13 +77,10 @@ export class SupabaseService {
   // and if its a postgrest error I can't find that one either so I've
   // left the return type implied for now.
   uploadAvatar(filePath: string, file: File) {
-    console.log('uploading');
-    console.log(filePath);
-    console.log(file);
     return from(this.supabase.storage.from('avatars').upload(filePath, file));
   }
 
-  getFullUrl(bucketName: BUCKETS, path: string): string {
+  getFullStorageUrl(bucketName: BUCKETS, path: string): string {
     return this.supabase.storage.from(bucketName).getPublicUrl(path).data
       .publicUrl;
   }

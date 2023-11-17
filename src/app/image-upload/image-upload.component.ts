@@ -71,8 +71,11 @@ export class ImageUploadComponent implements OnChanges, AfterViewInit {
     }
     if (this.avatarUrl.length === 0) {
       this.filePreview.nativeElement.src = '';
+      return;
     }
-    this.filePreview.nativeElement.src = this.supabase.getFullUrl(
+    console.log('avatar url');
+    console.log(this.avatarUrl);
+    this.filePreview.nativeElement.src = this.supabase.getFullStorageUrl(
       BUCKETS.AVATARS,
       this.avatarUrl
     );
