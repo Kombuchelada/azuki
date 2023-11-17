@@ -25,13 +25,11 @@ import { SupabaseService } from '../services/supabase.service';
 import { AuthTokenResponse } from '@supabase/supabase-js';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { LoadingDialogComponent } from '../loading-dialog/loading-dialog.component';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { SNACKBAR_MESSAGES } from '../constants/snackbar-messsages.constant';
-import { SNACKBAR_ACTIONS } from '../constants/snackbar-actions.constant';
-import { SNACKBAR_DURATIONS } from '../constants/snackbar-durations.constant';
 import { LOADING_DIALOG } from '../constants/loading-dialog.constant';
 import { Router } from '@angular/router';
 import { ROUTES } from '../constants/routes.constant';
+import { SnackbarService } from '../services/snackbar.service';
 
 @Component({
   selector: 'app-log-in',
@@ -69,13 +67,7 @@ export class LogInComponent {
     filter((loading) => loading === true),
     filter(() => {
       if (this.logInForm.invalid) {
-        this.snackBar.open(
-          SNACKBAR_MESSAGES.FORM_INVALID,
-          SNACKBAR_ACTIONS.DISMISS,
-          {
-            duration: SNACKBAR_DURATIONS.DEFAULT,
-          }
-        );
+        this.snackbarService.show(SNACKBAR_MESSAGES.FORM_INVALID);
         return false;
       }
       return true;
@@ -91,26 +83,14 @@ export class LogInComponent {
     tap(() => this.dialogRef.close()),
     map((tokenResponse) => {
       if (!tokenResponse) {
-        this.snackBar.open(
-          SNACKBAR_MESSAGES.LOGIN_FAILED,
-          SNACKBAR_ACTIONS.DISMISS,
-          {
-            duration: SNACKBAR_DURATIONS.DEFAULT,
-          }
-        );
+        this.snackbarService.show(SNACKBAR_MESSAGES.LOGIN_FAILED);
         return;
       }
       if (tokenResponse.error) {
-        this.snackBar.open(
-          tokenResponse.error.message,
-          SNACKBAR_ACTIONS.DISMISS,
-          { duration: SNACKBAR_DURATIONS.DEFAULT }
-        );
+        this.snackbarService.customError(tokenResponse.error.message);
         return;
       }
-      this.snackBar.open(SNACKBAR_MESSAGES.WELCOME, SNACKBAR_ACTIONS.DISMISS, {
-        duration: SNACKBAR_DURATIONS.DEFAULT,
-      });
+      this.snackbarService.show(SNACKBAR_MESSAGES.WELCOME);
       this.router.navigate([ROUTES.HOME]);
     })
   );
@@ -120,7 +100,7 @@ export class LogInComponent {
   constructor(
     private supabase: SupabaseService,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar,
+    private snackbarService: SnackbarService,
     private router: Router
   ) {
     this.logIn$.pipe(takeUntilDestroyed()).subscribe();

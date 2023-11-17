@@ -13,22 +13,22 @@
     />
   </div>
   <div class="flex gap-3">
-    <button
-      mat-raised-button
-      color="accent"
-      type="button"
-      (click)="fileInput.click()"
-    >
-      {{ label }}
-    </button>
     @if(avatarUrl.length > 0){
     <button
-      mat-raised-button
+      mat-button
       color="warn"
       type="button"
       (click)="fileSelected.emit(null)"
     >
       DELETE
+    </button>
+    <button
+      mat-stroked-button
+      color="accent"
+      type="button"
+      (click)="fileInput.click()"
+    >
+      {{ label }}
     </button>
     }
   </div>

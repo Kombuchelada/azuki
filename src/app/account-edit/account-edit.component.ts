@@ -30,13 +30,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { SNACKBAR_ACTIONS } from '../constants/snackbar-actions.constant';
-import { SNACKBAR_DURATIONS } from '../constants/snackbar-durations.constant';
 import { SNACKBAR_MESSAGES } from '../constants/snackbar-messsages.constant';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ImageUploadComponent } from '../image-upload/image-upload.component';
 import { HTTP_STATUS_CODES } from '../constants/http-status-codes.constant';
+import { SnackbarService } from '../services/snackbar.service';
 
 @Component({
   selector: 'app-account-edit',
@@ -86,13 +84,7 @@ export class AccountEditComponent {
     filter((loading) => loading),
     filter(() => {
       if (this.profileForm.invalid) {
-        this.snackBar.open(
-          SNACKBAR_MESSAGES.FORM_INVALID,
-          SNACKBAR_ACTIONS.DISMISS,
-          {
-            duration: SNACKBAR_DURATIONS.DEFAULT,
-          }
-        );
+        this.snackbarService.show(SNACKBAR_MESSAGES.FORM_INVALID);
         return false;
       }
       return true;
@@ -112,10 +104,8 @@ export class AccountEditComponent {
           if (statusCode === HTTP_STATUS_CODES.CONFLICT_409) {
             this.avatarUrl.setValue(fileName);
           } else {
-            this.snackBar.open(
-              `${SNACKBAR_MESSAGES.IMAGE_UPLOAD_FAILED}: ${uploadResponse.error}`,
-              SNACKBAR_ACTIONS.DISMISS,
-              { duration: SNACKBAR_DURATIONS.DEFAULT }
+            this.snackbarService.customError(
+              `${SNACKBAR_MESSAGES.IMAGE_UPLOAD_FAILED}: ${uploadResponse.error}`
             );
           }
         }
@@ -129,34 +119,20 @@ export class AccountEditComponent {
     tap(() => this.submitting$.next(false)),
     map((response) => {
       if (!response) {
-        this.snackBar.open(
-          SNACKBAR_MESSAGES.SUBMISSION_FAILED,
-          SNACKBAR_ACTIONS.DISMISS,
-          {
-            duration: SNACKBAR_DURATIONS.DEFAULT,
-          }
-        );
+        this.snackbarService.show(SNACKBAR_MESSAGES.SUBMISSION_FAILED);
         return;
       }
       if (response.error) {
-        this.snackBar.open(response.error.message, SNACKBAR_ACTIONS.DISMISS, {
-          duration: SNACKBAR_DURATIONS.DEFAULT,
-        });
+        this.snackbarService.customError(response.error.message);
         return;
       }
-      this.snackBar.open(
-        SNACKBAR_MESSAGES.PROFILE_UPDATED,
-        SNACKBAR_ACTIONS.DISMISS,
-        {
-          duration: SNACKBAR_DURATIONS.DEFAULT,
-        }
-      );
+      this.snackbarService.show(SNACKBAR_MESSAGES.PROFILE_UPDATED);
     })
   );
 
   constructor(
     private supabase: SupabaseService,
-    private snackBar: MatSnackBar
+    private snackbarService: SnackbarService
   ) {
     this.profileForm.disable();
     this.supabase.session
