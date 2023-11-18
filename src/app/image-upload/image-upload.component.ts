@@ -17,6 +17,8 @@ import { TEMPLATE_STRINGS } from '../constants/template.constant';
 import { SupabaseService } from '../services/supabase.service';
 import { BUCKETS } from '../constants/buckets.constant';
 import { MatIconModule } from '@angular/material/icon';
+import { map, take } from 'rxjs';
+import { SnackbarService } from '../services/snackbar.service';
 
 @Component({
   selector: 'app-image-upload',
@@ -37,7 +39,10 @@ export class ImageUploadComponent implements OnChanges, AfterViewInit {
   @Output() fileSelected = new EventEmitter<File | null>();
   imageLoaded = signal(false);
 
-  constructor(private supabase: SupabaseService) {}
+  constructor(
+    private supabase: SupabaseService,
+    private snackbarService: SnackbarService
+  ) {}
 
   ngAfterViewInit(): void {
     this.showImage();
@@ -65,6 +70,22 @@ export class ImageUploadComponent implements OnChanges, AfterViewInit {
     this.fileSelected.emit(target.files[0]);
   }
 
+  deleteImage(): void {
+    this.supabase
+      .deleteFiles(BUCKETS.AVATARS, [this.avatarUrl])
+      .pipe(
+        take(1),
+        map((response) => {
+          if (!response.error) {
+            this.fileSelected.emit(null);
+          } else {
+            this.snackbarService.customError(response.error.message);
+          }
+        })
+      )
+      .subscribe();
+  }
+
   private showImage(): void {
     if (!this.filePreview) {
       return;
@@ -73,8 +94,6 @@ export class ImageUploadComponent implements OnChanges, AfterViewInit {
       this.filePreview.nativeElement.src = '';
       return;
     }
-    console.log('avatar url');
-    console.log(this.avatarUrl);
     this.filePreview.nativeElement.src = this.supabase.getFullStorageUrl(
       BUCKETS.AVATARS,
       this.avatarUrl

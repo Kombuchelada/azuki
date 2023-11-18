@@ -14,14 +14,10 @@
   </div>
   <div class="flex gap-3">
     @if(avatarUrl.length > 0){
-    <button
-      mat-button
-      color="warn"
-      type="button"
-      (click)="fileSelected.emit(null)"
-    >
+    <button mat-button color="warn" type="button" (click)="deleteImage()">
       DELETE
     </button>
+    }
     <button
       mat-stroked-button
       color="accent"
@@ -30,7 +26,6 @@
     >
       {{ label }}
     </button>
-    }
   </div>
 </div>
 <input

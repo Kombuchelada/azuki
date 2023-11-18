@@ -35,6 +35,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ImageUploadComponent } from '../image-upload/image-upload.component';
 import { HTTP_STATUS_CODES } from '../constants/http-status-codes.constant';
 import { SnackbarService } from '../services/snackbar.service';
+import { BUCKETS } from '../constants/buckets.constant';
 
 @Component({
   selector: 'app-account-edit',
@@ -89,7 +90,7 @@ export class AccountEditComponent {
       }
       return true;
     }),
-    switchMap(() => this.uploadAvatar()),
+    switchMap(() => this.updateAvatar()),
     map((uploadResult) => {
       if (uploadResult) {
         const fileName = uploadResult[0].fileName;
@@ -180,9 +181,14 @@ export class AccountEditComponent {
     return this.supabase.updateProfile(newProfile);
   }
 
-  private uploadAvatar() {
+  private updateAvatar() {
     const profile = this.profile();
-    if (!this.avatarFile.value || !profile || !profile.id) {
+    if (!profile || !profile.id) {
+      return of(null);
+    }
+
+    if (!this.avatarFile.value) {
+      this.avatarUrl.setValue('');
       return of(null);
     }
 
@@ -191,7 +197,7 @@ export class AccountEditComponent {
     const fileName = `public/${profile.id}.${fileExt}`;
     return forkJoin([
       of({ fileName: fileName }),
-      this.supabase.uploadAvatar(fileName, file),
+      this.supabase.uploadFile(BUCKETS.AVATARS, fileName, file),
     ]);
   }
 }

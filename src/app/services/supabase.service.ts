@@ -13,6 +13,7 @@ import { from, Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Profile } from '../models/profile.model';
 import { BUCKETS } from '../constants/buckets.constant';
+import { StorageError, FileObject } from '@supabase/storage-js';
 
 @Injectable({
   providedIn: 'root',
@@ -69,15 +70,45 @@ export class SupabaseService {
     return from(this.supabase.from('profiles').upsert(update));
   }
 
-  downLoadImage(path: string) {
-    return from(this.supabase.storage.from('avatars').download(path));
+  downloadFile(bucket: BUCKETS, path: string) {
+    return from(this.supabase.storage.from(bucket).download(path));
   }
 
-  // StorageError doesn't seem to be exposed in the supabase api,
-  // and if its a postgrest error I can't find that one either so I've
-  // left the return type implied for now.
-  uploadAvatar(filePath: string, file: File) {
-    return from(this.supabase.storage.from('avatars').upload(filePath, file));
+  uploadFile(
+    bucket: BUCKETS,
+    filePath: string,
+    file: File
+  ): Observable<
+    | {
+        data: {
+          path: string;
+        };
+        error: null;
+      }
+    | {
+        data: null;
+        error: StorageError;
+      }
+  > {
+    return from(
+      this.supabase.storage.from(BUCKETS.AVATARS).upload(filePath, file)
+    );
+  }
+
+  deleteFiles(
+    bucket: BUCKETS,
+    filePaths: string[]
+  ): Observable<
+    | {
+        data: FileObject[];
+        error: null;
+      }
+    | {
+        data: null;
+        error: StorageError;
+      }
+  > {
+    return from(this.supabase.storage.from(bucket).remove(filePaths));
   }
 
   getFullStorageUrl(bucketName: BUCKETS, path: string): string {
