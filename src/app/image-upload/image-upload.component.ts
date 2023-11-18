@@ -19,37 +19,50 @@ import { BUCKETS } from '../constants/buckets.constant';
 import { MatIconModule } from '@angular/material/icon';
 import { map, take } from 'rxjs';
 import { SnackbarService } from '../services/snackbar.service';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-image-upload',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatIconModule],
+  imports: [
+    CommonModule,
+    MatButtonModule,
+    MatIconModule,
+    MatProgressSpinnerModule,
+  ],
   templateUrl: './image-upload.component.html',
   styles: `.image-icon-size {
     height: 250px;
     width: 250px;
     font-size: 250px;
+  }
+  .spinner-margin {
+    margin: 5rem;
   }`,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ImageUploadComponent implements OnChanges, AfterViewInit {
+export class ImageUploadComponent implements OnChanges {
   @ViewChild('filePreview') filePreview!: ElementRef<HTMLImageElement>;
   @Input() label = TEMPLATE_STRINGS.AVATAR_LABEL;
   @Input() avatarUrl: string = '';
   @Output() fileSelected = new EventEmitter<File | null>();
-  imageLoaded = signal(false);
+  imageExists = signal(false);
+  loading = signal(true);
 
   constructor(
     private supabase: SupabaseService,
     private snackbarService: SnackbarService
   ) {}
 
-  ngAfterViewInit(): void {
-    this.showImage();
-  }
+  // ngAfterViewInit(): void {
+  //   console.log('after view init');
+  //   this.showImage();
+  // }
 
   ngOnChanges(changes: SimpleChanges): void {
+    console.log('on changes');
     if (changes['avatarUrl'] && this.filePreview?.nativeElement) {
+      console.log('updating image in changes');
       this.showImage();
     }
   }
@@ -78,6 +91,8 @@ export class ImageUploadComponent implements OnChanges, AfterViewInit {
         map((response) => {
           if (!response.error) {
             this.fileSelected.emit(null);
+            this.imageExists.set(false);
+            this.avatarUrl = '';
           } else {
             this.snackbarService.customError(response.error.message);
           }
@@ -92,8 +107,12 @@ export class ImageUploadComponent implements OnChanges, AfterViewInit {
     }
     if (this.avatarUrl.length === 0) {
       this.filePreview.nativeElement.src = '';
+      console.log('setting image exists to false');
+      this.imageExists.set(false);
       return;
     }
+    console.log('setting image exists to true');
+    this.imageExists.set(true);
     this.filePreview.nativeElement.src = this.supabase.getFullStorageUrl(
       BUCKETS.AVATARS,
       this.avatarUrl

@@ -110,6 +110,7 @@ export class AccountEditComponent {
           }
         }
         if (uploadResponse?.data?.path) {
+          console.log(uploadResponse.data.path);
           this.avatarUrl.setValue(uploadResponse.data.path);
           return;
         }
