@@ -66,6 +66,10 @@ export class AccountEditComponent {
     ]),
     avatarUrl: new FormControl<string>('', { nonNullable: true }),
     avatarFile: new FormControl<File | null>(null),
+    bio: new FormControl<string>('', {
+      nonNullable: true,
+      validators: Validators.maxLength(4000),
+    }),
   });
 
   get fullName(): FormControl<string | null> {
@@ -78,6 +82,10 @@ export class AccountEditComponent {
 
   get avatarFile(): FormControl<File | null> {
     return this.profileForm.controls.avatarFile;
+  }
+
+  get bio(): FormControl<string> {
+    return this.profileForm.controls.bio;
   }
 
   submitting$ = new Subject<boolean>();
@@ -110,7 +118,6 @@ export class AccountEditComponent {
           }
         }
         if (uploadResponse?.data?.path) {
-          console.log(uploadResponse.data.path);
           this.avatarUrl.setValue(uploadResponse.data.path);
           return;
         }
@@ -150,6 +157,7 @@ export class AccountEditComponent {
           if (profile?.data) {
             this.profile.set(profile.data);
             this.fullName.setValue(profile.data.full_name);
+            this.bio.setValue(profile.data.bio);
             if (profile.data.avatar_url) {
               this.avatarUrl.setValue(profile.data.avatar_url);
             }
@@ -179,6 +187,7 @@ export class AccountEditComponent {
     }
     newProfile.full_name = this.fullName.value as string;
     newProfile.avatar_url = this.avatarUrl.value as string;
+    newProfile.bio = this.bio.value as string;
     return this.supabase.updateProfile(newProfile);
   }
 

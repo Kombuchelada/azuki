@@ -1,5 +1,4 @@
 import {
-  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
   ElementRef,
@@ -54,15 +53,8 @@ export class ImageUploadComponent implements OnChanges {
     private snackbarService: SnackbarService
   ) {}
 
-  // ngAfterViewInit(): void {
-  //   console.log('after view init');
-  //   this.showImage();
-  // }
-
   ngOnChanges(changes: SimpleChanges): void {
-    console.log('on changes');
     if (changes['avatarUrl'] && this.filePreview?.nativeElement) {
-      console.log('updating image in changes');
       this.showImage();
     }
   }
@@ -107,11 +99,9 @@ export class ImageUploadComponent implements OnChanges {
     }
     if (this.avatarUrl.length === 0) {
       this.filePreview.nativeElement.src = '';
-      console.log('setting image exists to false');
       this.imageExists.set(false);
       return;
     }
-    console.log('setting image exists to true');
     this.imageExists.set(true);
     this.filePreview.nativeElement.src = this.supabase.getFullStorageUrl(
       BUCKETS.AVATARS,
