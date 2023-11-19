@@ -5,6 +5,7 @@ import { TABLES } from '../constants/tables.constant';
 import { PostgrestSingleResponse } from '@supabase/supabase-js';
 import { SnackbarService } from './snackbar.service';
 import { Post } from '../models/post.model';
+import { PostDto } from '../models/dtos/post.dto';
 
 @Injectable({
   providedIn: 'root',
@@ -31,15 +32,33 @@ export class PostService {
     );
   }
 
-  getPosts(): Observable<Post[]> {
-    return from(this.supabase.client.from(TABLES.POSTS).select()).pipe(
+  getRecentPosts(numberOfPosts = 10): Observable<Post[]> {
+    const query = this.supabase.client
+      .from(TABLES.POSTS)
+      .select(
+        'id, created_at, title, content, profile (username, full_name, avatar_url)'
+      )
+      .order('created_at', { ascending: false })
+      .limit(numberOfPosts);
+    return from(query).pipe(
       map((response) => {
         if (response.error) {
           this.snackbarService.customError(response.error.message);
           return [];
         }
-        return response.data as Post[];
+        const dtos = response.data as PostDto[];
+        return dtos.map((dto) => this.convertDtoToModel(dto));
       })
     );
+  }
+
+  private convertDtoToModel(dto: PostDto): Post {
+    return {
+      id: dto.id,
+      createdAt: new Date(dto.created_at),
+      authorId: dto.author_id,
+      title: dto.title,
+      content: dto.content,
+    } as Post;
   }
 }

@@ -18,7 +18,7 @@ export class PostListComponent {
   posts = signal<Post[]>([]);
   constructor(private postService: PostService) {
     this.postService
-      .getPosts()
+      .getRecentPosts()
       .pipe(
         takeUntilDestroyed(),
         map((posts) => {
