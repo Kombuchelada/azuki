@@ -1,0 +1,15 @@
+<div class="flex flex-col gap-3">
+  <h2 class="m-0">Recent Posts</h2>
+  <mat-divider></mat-divider>
+  @for(post of posts(); track post.id){
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>{{ post.title }}</mat-card-title>
+      <mat-card-subtitle>{{ post.author_id }}</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <p>{{ post.content }}</p>
+    </mat-card-content>
+  </mat-card>
+  }
+</div>
