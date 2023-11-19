@@ -1,15 +1,26 @@
-<div formGroup="postForm">
+<form [formGroup]="postForm" (submit)="submitPost()">
   <h1>Create A New Post</h1>
-  <label for="title" class="block">Title</label>
-  <input type="text" formControlName="title" id="title" class="w-full" />
-  <label for="body" class="block">Body</label>
-  <textarea
-    name="body"
-    id="body"
-    cols="30"
-    rows="10"
-    formControlName="body"
-    class="w-full"
-  ></textarea>
-  <button type="button">Submit</button>
-</div>
+  <mat-form-field class="w-full">
+    <mat-label for="title">Title</mat-label>
+    <input matInput type="text" [formControl]="title" id="title" required />
+    @if (title.errors?.['required']) {
+    <mat-error>Title is required. </mat-error>
+    } @if (title.errors?.['maxlength']) {
+    <mat-error
+      >Titles cannot be more than 512 characters. You are currently at
+      {{ title.value.length }}</mat-error
+    >
+    }
+  </mat-form-field>
+  <mat-form-field class="w-full">
+    <mat-label for="content">Post Content</mat-label>
+    <textarea matInput [formControl]="content" id="content"></textarea>
+    @if (content.errors?.['maxlength']) {
+    <mat-error
+      >Post Content cannot be more than 4,000,000 characters. You are currently
+      at {{ content.value.length }}</mat-error
+    >
+    }
+  </mat-form-field>
+  <button type="button" color="primary" mat-raised-button>CREATE POST</button>
+</form>
