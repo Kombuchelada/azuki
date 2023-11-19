@@ -31,7 +31,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     MatProgressSpinnerModule,
   ],
   templateUrl: './image-upload.component.html',
-  styles: `.image-icon-size {
+  styles: `.image-icon-size, mat-icon.image-icon-size {
     height: 250px;
     width: 250px;
     font-size: 250px;
