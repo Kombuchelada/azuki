@@ -14,16 +14,17 @@ import { environment } from 'src/environments/environment';
 import { Profile } from '../models/profile.model';
 import { BUCKETS } from '../constants/buckets.constant';
 import { StorageError, FileObject } from '@supabase/storage-js';
+import { TABLES } from '../constants/tables.constant';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SupabaseService {
-  private supabase: SupabaseClient;
+  client: SupabaseClient;
   _session: AuthSession | null = null;
 
   constructor() {
-    this.supabase = createClient(
+    this.client = createClient(
       environment.supabaseUrl,
       environment.supabaseKey
     );
@@ -31,7 +32,7 @@ export class SupabaseService {
 
   get session(): Observable<AuthSession | null> {
     return from(
-      this.supabase.auth.getSession().then(({ data }) => {
+      this.client.auth.getSession().then(({ data }) => {
         return data.session;
       })
     );
@@ -39,8 +40,8 @@ export class SupabaseService {
 
   profile(id: string): Observable<PostgrestSingleResponse<Profile>> {
     return from(
-      this.supabase
-        .from('profiles')
+      this.client
+        .from(TABLES.PROFILES)
         .select(`id, username, full_name, avatar_url, bio`)
         .eq('id', id)
         .single()
@@ -50,15 +51,15 @@ export class SupabaseService {
   authChanges(
     callback: (event: AuthChangeEvent, session: Session | null) => void
   ) {
-    return this.supabase.auth.onAuthStateChange(callback);
+    return this.client.auth.onAuthStateChange(callback);
   }
 
   logIn(email: string, password: string): Observable<AuthTokenResponse> {
-    return from(this.supabase.auth.signInWithPassword({ email, password }));
+    return from(this.client.auth.signInWithPassword({ email, password }));
   }
 
   signOut(): Observable<{ error: AuthError | null }> {
-    return from(this.supabase.auth.signOut());
+    return from(this.client.auth.signOut());
   }
 
   updateProfile(profile: Profile): Observable<PostgrestSingleResponse<null>> {
@@ -67,11 +68,11 @@ export class SupabaseService {
       updated_at: new Date(),
     };
 
-    return from(this.supabase.from('profiles').upsert(update));
+    return from(this.client.from(TABLES.PROFILES).upsert(update));
   }
 
   downloadFile(bucket: BUCKETS, path: string) {
-    return from(this.supabase.storage.from(bucket).download(path));
+    return from(this.client.storage.from(bucket).download(path));
   }
 
   uploadFile(
@@ -91,7 +92,7 @@ export class SupabaseService {
       }
   > {
     return from(
-      this.supabase.storage.from(BUCKETS.AVATARS).upload(filePath, file)
+      this.client.storage.from(BUCKETS.AVATARS).upload(filePath, file)
     );
   }
 
@@ -108,11 +109,11 @@ export class SupabaseService {
         error: StorageError;
       }
   > {
-    return from(this.supabase.storage.from(bucket).remove(filePaths));
+    return from(this.client.storage.from(bucket).remove(filePaths));
   }
 
   getFullStorageUrl(bucketName: BUCKETS, path: string): string {
-    return this.supabase.storage.from(bucketName).getPublicUrl(path).data
+    return this.client.storage.from(bucketName).getPublicUrl(path).data
       .publicUrl;
   }
 }

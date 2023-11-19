@@ -9,6 +9,9 @@ import {
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { PostService } from '../services/post.service';
+import { SnackbarService } from '../services/snackbar.service';
+import { SNACKBAR_MESSAGES } from '../constants/snackbar-messsages.constant';
 
 @Component({
   selector: 'app-post-edit',
@@ -43,5 +46,28 @@ export class PostEditComponent {
     return this.postForm.controls.content;
   }
 
-  submitPost(): void {}
+  constructor(
+    private postService: PostService,
+    private snackbarService: SnackbarService
+  ) {}
+
+  submitPost(): void {
+    if (this.postForm.invalid) {
+      this.snackbarService.show(SNACKBAR_MESSAGES.FORM_INVALID);
+      return;
+    }
+    this.postService
+      .createPost(this.postForm.getRawValue())
+      .subscribe((response) => {
+        if (!response) {
+          this.snackbarService.show(SNACKBAR_MESSAGES.SUBMISSION_FAILED);
+          return;
+        }
+        if (response.error) {
+          this.snackbarService.customError(response.error.message);
+          return;
+        }
+        //TODO: redirect to details view when it exists
+      });
+  }
 }

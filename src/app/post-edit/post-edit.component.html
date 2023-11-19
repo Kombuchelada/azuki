@@ -6,21 +6,20 @@
     @if (title.errors?.['required']) {
     <mat-error>Title is required. </mat-error>
     } @if (title.errors?.['maxlength']) {
-    <mat-error
-      >Titles cannot be more than 512 characters. You are currently at
-      {{ title.value.length }}</mat-error
-    >
+    <mat-error>Titles cannot be more than 512 characters. You are currently at
+      {{ title.value.length }}</mat-error>
     }
   </mat-form-field>
   <mat-form-field class="w-full">
     <mat-label for="content">Post Content</mat-label>
     <textarea matInput [formControl]="content" id="content"></textarea>
+    @if (content.errors?.['required']) {
+    <mat-error>Content is required. </mat-error>
+    }
     @if (content.errors?.['maxlength']) {
-    <mat-error
-      >Post Content cannot be more than 4,000,000 characters. You are currently
-      at {{ content.value.length }}</mat-error
-    >
+    <mat-error>Post Content cannot be more than 4,000,000 characters. You are currently
+      at {{ content.value.length }}</mat-error>
     }
   </mat-form-field>
-  <button type="button" color="primary" mat-raised-button>CREATE POST</button>
+  <button type="submit" color="primary" mat-raised-button>CREATE POST</button>
 </form>
