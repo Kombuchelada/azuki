@@ -3,5 +3,9 @@ export interface Post {
   createdAt: Date;
   title: string;
   content: string;
-  authorId: string;
+  profile: {
+    username: string;
+    full_name: string;
+    avatar_url: string;
+  };
 }

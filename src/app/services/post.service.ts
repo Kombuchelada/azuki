@@ -36,7 +36,7 @@ export class PostService {
     const query = this.supabase.client
       .from(TABLES.POSTS)
       .select(
-        'id, created_at, title, content, profile (username, full_name, avatar_url)'
+        'id, created_at, title, content, profile:author_id(username, full_name, avatar_url)'
       )
       .order('created_at', { ascending: false })
       .limit(numberOfPosts);
@@ -46,7 +46,8 @@ export class PostService {
           this.snackbarService.customError(response.error.message);
           return [];
         }
-        const dtos = response.data as PostDto[];
+        //the type response from postgrest assumes the profile property is an array, but it is not.
+        const dtos = response.data as unknown as PostDto[];
         return dtos.map((dto) => this.convertDtoToModel(dto));
       })
     );
@@ -56,7 +57,11 @@ export class PostService {
     return {
       id: dto.id,
       createdAt: new Date(dto.created_at),
-      authorId: dto.author_id,
+      profile: {
+        username: dto.profile.username,
+        full_name: dto.profile.full_name,
+        avatar_url: dto.profile.avatar_url,
+      },
       title: dto.title,
       content: dto.content,
     } as Post;
