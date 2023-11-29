@@ -37,7 +37,7 @@ export class PostService {
     const query = this.supabase.client
       .from(TABLES.POSTS)
       .select(
-        'id, created_at, title, content, profile:author_id(username, full_name, avatar_url)'
+        'id, createdAt:created_at, title, content, profile:author_id(username, fullName:full_name, avatarUrl:avatar_url)'
       )
       .order('created_at', { ascending: false })
       .limit(numberOfPosts);
@@ -54,30 +54,17 @@ export class PostService {
          * It is a single object, and as far as I can tell, there is no way to assert the type
          * with the supabase or postgrest libraries.
          */
-        const dtos = response.data as unknown as PostDto[];
-        return dtos.map((dto) => this.mapDtoToModel(dto));
+        const posts = response.data as unknown as Post[];
+        posts.forEach((post) => {
+          if (post.profile.avatarUrl) {
+            post.profile.avatarUrl = this.supabase.getFullStorageUrl(
+              BUCKETS.AVATARS,
+              post.profile.avatarUrl
+            );
+          }
+        });
+        return posts;
       })
     );
-  }
-
-  private mapDtoToModel(dto: PostDto): Post {
-    let fullAvatarUrl = '';
-    if (dto.profile.avatar_url) {
-      fullAvatarUrl = this.supabase.getFullStorageUrl(
-        BUCKETS.AVATARS,
-        dto.profile.avatar_url
-      );
-    }
-    return {
-      id: dto.id,
-      createdAt: new Date(dto.created_at),
-      profile: {
-        username: dto.profile.username,
-        fullName: dto.profile.full_name,
-        avatarUrl: fullAvatarUrl,
-      },
-      title: dto.title,
-      content: dto.content,
-    } as Post;
   }
 }
