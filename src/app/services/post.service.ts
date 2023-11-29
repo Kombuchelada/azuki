@@ -73,8 +73,8 @@ export class PostService {
       createdAt: new Date(dto.created_at),
       profile: {
         username: dto.profile.username,
-        full_name: dto.profile.full_name,
-        avatar_url: fullAvatarUrl,
+        fullName: dto.profile.full_name,
+        avatarUrl: fullAvatarUrl,
       },
       title: dto.title,
       content: dto.content,

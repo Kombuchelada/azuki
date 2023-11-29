@@ -7,11 +7,11 @@
       <mat-card-header>
         <mat-card-title>
           <div class="flex gap-3 items-center">
-            @if(post.profile.avatar_url.length > 0) {
+            @if(post.profile.avatarUrl.length > 0) {
             <img
               class="clip-path-circle"
               height="50px"
-              [src]="post.profile.avatar_url"
+              [src]="post.profile.avatarUrl"
               [alt]="'avatar of user ' + post.profile.username"
             />
             } @else {

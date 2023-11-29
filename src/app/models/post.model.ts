@@ -5,7 +5,7 @@ export interface Post {
   content: string;
   profile: {
     username: string;
-    full_name: string;
-    avatar_url: string;
+    fullName: string;
+    avatarUrl: string;
   };
 }
