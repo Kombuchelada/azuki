@@ -5,7 +5,6 @@ import { TABLES } from '../constants/tables.constant';
 import { PostgrestSingleResponse } from '@supabase/supabase-js';
 import { SnackbarService } from './snackbar.service';
 import { Post } from '../models/post.model';
-import { PostDto } from '../models/dtos/post.dto';
 import { BUCKETS } from '../constants/buckets.constant';
 
 @Injectable({
