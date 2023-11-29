@@ -1,7 +1,11 @@
 export interface Post {
   id: string;
-  created_at: string;
+  createdAt: Date;
   title: string;
   content: string;
-  author_id: string;
+  profile: {
+    username: string;
+    fullName: string;
+    avatarUrl: string;
+  };
 }

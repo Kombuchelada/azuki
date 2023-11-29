@@ -91,9 +91,7 @@ export class SupabaseService {
         error: StorageError;
       }
   > {
-    return from(
-      this.client.storage.from(BUCKETS.AVATARS).upload(filePath, file)
-    );
+    return from(this.client.storage.from(bucket).upload(filePath, file));
   }
 
   deleteFiles(
