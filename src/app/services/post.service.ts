@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { SupabaseService } from './supabase.service';
-import { Observable, from, map, of, switchMap } from 'rxjs';
+import { Observable, from, map, switchMap } from 'rxjs';
 import { TABLES } from '../constants/tables.constant';
-import { PostgrestSingleResponse } from '@supabase/supabase-js';
+import { PostgrestSingleResponse, Session } from '@supabase/supabase-js';
 import { SnackbarService } from './snackbar.service';
 import { Post } from '../models/post.model';
 import { BUCKETS } from '../constants/buckets.constant';
+import { RESPONSE_ERRORS } from '../constants/response.constant';
 
 @Injectable({
   providedIn: 'root',
@@ -22,10 +23,13 @@ export class PostService {
     author_id?: string;
   }): Observable<PostgrestSingleResponse<null> | null> {
     return this.supabase.session.pipe(
-      switchMap((session) => {
+      map((session) => {
         if (!session) {
-          return of(null);
+          throw new Error(RESPONSE_ERRORS.SESSION_NULL);
         }
+        return session as Session;
+      }),
+      switchMap((session) => {
         post.author_id = session.user.id;
         return from(this.supabase.client.from(TABLES.POSTS).insert(post));
       })

@@ -56,18 +56,15 @@ export class PostEditComponent {
       this.snackbarService.show(SNACKBAR_MESSAGES.FORM_INVALID);
       return;
     }
-    this.postService
-      .createPost(this.postForm.getRawValue())
-      .subscribe((response) => {
-        if (!response) {
-          this.snackbarService.show(SNACKBAR_MESSAGES.SUBMISSION_FAILED);
-          return;
-        }
-        if (response.error) {
+    this.postService.createPost(this.postForm.getRawValue()).subscribe({
+      next: (response) => {
+        if (response?.error) {
           this.snackbarService.customError(response.error.message);
-          return;
         }
-        //TODO: redirect to details view when it exists
-      });
+      },
+      error: (error) => {
+        this.snackbarService.customError(error);
+      },
+    });
   }
 }
