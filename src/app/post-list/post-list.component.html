@@ -1,18 +1,34 @@
 <div class="flex flex-col gap-3">
   <h2 class="m-0">Recent Posts</h2>
   <mat-divider></mat-divider>
-  @for(post of posts(); track post.id){
-  <mat-card>
-    <mat-card-header>
-      <mat-card-title>{{ post.title }}</mat-card-title>
-      <mat-card-subtitle
-        >{{ post.profile.username }}
-        {{ post.createdAt | date }}</mat-card-subtitle
-      >
-    </mat-card-header>
-    <mat-card-content>
-      <p>{{ post.content }}</p>
-    </mat-card-content>
-  </mat-card>
-  }
+  <div class="grid gap-4 post-grid">
+    @for(post of posts(); track post.id){
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>
+          <div class="flex gap-3 items-center">
+            @if(post.profile.avatar_url.length > 0) {
+            <img
+              class="clip-path-circle"
+              height="50px"
+              [src]="post.profile.avatar_url"
+              [alt]="'avatar of user ' + post.profile.username"
+            />
+            } @else {
+            <mat-icon>account_circle</mat-icon>
+            }
+            <div>{{ post.profile.username }}</div>
+          </div>
+          <div>{{ post.title }}</div></mat-card-title
+        >
+      </mat-card-header>
+      <mat-card-content>
+        <p>{{ post.content }}</p>
+      </mat-card-content>
+      <mat-card-footer>
+        <small class="px-4">{{ post.createdAt | date : "mediumDate" }}</small>
+      </mat-card-footer>
+    </mat-card>
+    }
+  </div>
 </div>

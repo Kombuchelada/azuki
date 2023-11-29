@@ -6,6 +6,7 @@ import { PostgrestSingleResponse } from '@supabase/supabase-js';
 import { SnackbarService } from './snackbar.service';
 import { Post } from '../models/post.model';
 import { PostDto } from '../models/dtos/post.dto';
+import { BUCKETS } from '../constants/buckets.constant';
 
 @Injectable({
   providedIn: 'root',
@@ -46,21 +47,34 @@ export class PostService {
           this.snackbarService.customError(response.error.message);
           return [];
         }
-        //the type response from postgrest assumes the profile property is an array, but it is not.
+        /**
+         * This is because of a lack of being able to specify related types
+         * in the response. Because the supabase client doesn't know there can only be 1
+         * profile matching the author_id, it suggests the profile is an array, but it is not.
+         * It is a single object, and as far as I can tell, there is no way to assert the type
+         * with the supabase or postgrest libraries.
+         */
         const dtos = response.data as unknown as PostDto[];
-        return dtos.map((dto) => this.convertDtoToModel(dto));
+        return dtos.map((dto) => this.mapDtoToModel(dto));
       })
     );
   }
 
-  private convertDtoToModel(dto: PostDto): Post {
+  private mapDtoToModel(dto: PostDto): Post {
+    let fullAvatarUrl = '';
+    if (dto.profile.avatar_url) {
+      fullAvatarUrl = this.supabase.getFullStorageUrl(
+        BUCKETS.AVATARS,
+        dto.profile.avatar_url
+      );
+    }
     return {
       id: dto.id,
       createdAt: new Date(dto.created_at),
       profile: {
         username: dto.profile.username,
         full_name: dto.profile.full_name,
-        avatar_url: dto.profile.avatar_url,
+        avatar_url: fullAvatarUrl,
       },
       title: dto.title,
       content: dto.content,
