@@ -1,11 +1,14 @@
-html {
-  box-sizing: border-box;
+html,
+body {
+  height: 100%;
 }
 
-*,
-*:before,
-*:after {
-  box-sizing: inherit;
+body {
+  margin: 0;
+}
+
+.grid {
+  display: grid;
 }
 
 .flex {
@@ -46,6 +49,10 @@ html {
 
 .justify-around {
   justify-content: space-around;
+}
+
+.justify-between {
+  justify-content: space-between;
 }
 
 .w-full {
@@ -1014,6 +1021,44 @@ html {
 
 .pl-14 {
   padding-left: 3.5rem;
+}
+
+.container {
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .container {
+    max-width: 640px;
+  }
+}
+@media (min-width: 720px) {
+  .container {
+    max-width: 720px;
+  }
+}
+@media (min-width: 768px) {
+  .container {
+    max-width: 768px;
+  }
+}
+@media (min-width: 1024px) {
+  .container {
+    max-width: 1024px;
+  }
+}
+@media (min-width: 1280px) {
+  .container {
+    max-width: 1280px;
+  }
+}
+@media (min-width: 1536px) {
+  .container {
+    max-width: 1536px;
+  }
+}
+.min-w-25dvw {
+  min-width: 25dvw;
 }
 
 .clip-path-circle {

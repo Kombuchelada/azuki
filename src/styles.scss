@@ -66,12 +66,12 @@ body {
   height: 100%;
 }
 
-$marginPaddingMap: (
+$marginOrPadding: (
   "m": "margin",
   "p": "padding",
 );
 
-$sideToClassMap: (
+$sidesAndClasses: (
   "t": "top",
   "r": "right",
   "b": "bottom",
@@ -86,7 +86,7 @@ $baseScale: 0.25rem;
     gap: $value;
   }
 
-  @each $mOrP, $marginOrPadding in $marginPaddingMap {
+  @each $mOrP, $marginOrPadding in $marginOrPadding {
     .#{$mOrP}x-#{$i} {
       #{$marginOrPadding}-left: $value;
       #{$marginOrPadding}-right: $value;
@@ -99,12 +99,54 @@ $baseScale: 0.25rem;
       #{$marginOrPadding}: $value;
     }
 
-    @each $letter, $side in $sideToClassMap {
+    @each $letter, $side in $sidesAndClasses {
       .#{$mOrP}#{$letter}-#{$i} {
         #{$marginOrPadding}-#{$side}: $value;
       }
     }
   }
+}
+
+.container {
+  width: 100%;
+}
+
+$breakpoints: (
+  "sm": 640px,
+  "md": 720px,
+  "lg": 768px,
+  "xl": 1024px,
+  "2xl": 1280px,
+  "3xl": 1536px,
+);
+
+@each $size, $pixels in $breakpoints {
+  @media (min-width: $pixels) {
+    .container {
+      max-width: $pixels;
+    }
+  }
+}
+
+.m-auto {
+  margin: auto;
+}
+.mx-auto {
+  margin-left: auto;
+  margin-right: auto;
+}
+.my-auto {
+  margin-top: auto;
+  margin-bottom: auto;
+}
+.mr-auto {
+  margin-right: auto;
+}
+.mb-auto {
+  margin-bottom: auto;
+}
+.ml-auto {
+  margin-left: auto;
 }
 
 .min-w-25dvw {
