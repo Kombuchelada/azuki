@@ -1,0 +1,116 @@
+// /* You can add global styles to this file, and also import other style files */
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+}
+
+.grid {
+  display: grid;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.grow {
+  flex-grow: 1;
+}
+
+.grow-0 {
+  flex-grow: 0;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+.items-start {
+  align-items: start;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.content-center {
+  align-content: center;
+}
+
+.justify-end {
+  justify-content: end;
+}
+
+.justify-around {
+  justify-content: space-around;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+//width and height could be added to the
+//loop below, but I haven't needed more than
+//these classes 98% of the time.
+.w-full {
+  width: 100%;
+}
+
+.h-full {
+  height: 100%;
+}
+
+$marginPaddingMap: (
+  "m": "margin",
+  "p": "padding",
+);
+
+$sideToClassMap: (
+  "t": "top",
+  "r": "right",
+  "b": "bottom",
+  "l": "left",
+);
+
+$baseScale: 0.25rem;
+
+@for $i from 0 through 14 {
+  $value: $i * $baseScale;
+  .gap-#{$i} {
+    gap: $value;
+  }
+
+  @each $mOrP, $marginOrPadding in $marginPaddingMap {
+    .#{$mOrP}x-#{$i} {
+      #{$marginOrPadding}-left: $value;
+      #{$marginOrPadding}-right: $value;
+    }
+    .#{$mOrP}y-#{$i} {
+      #{$marginOrPadding}-top: $value;
+      #{$marginOrPadding}-bottom: $value;
+    }
+    .#{$mOrP}-#{$i} {
+      #{$marginOrPadding}: $value;
+    }
+
+    @each $letter, $side in $sideToClassMap {
+      .#{$mOrP}#{$letter}-#{$i} {
+        #{$marginOrPadding}-#{$side}: $value;
+      }
+    }
+  }
+}
+
+.min-w-25dvw {
+  min-width: 25dvw;
+}
+
+.clip-path-circle {
+  clip-path: circle();
+}
