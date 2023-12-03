@@ -8,12 +8,14 @@ import { Post } from '../models/post.model';
 import { BUCKETS } from '../constants/buckets.constant';
 import { RESPONSE_ERRORS } from '../constants/response.constant';
 import { AuthService } from './auth.service';
+import { FileService } from './file.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PostService {
   constructor(
+    private fileService: FileService,
     private supabase: SupabaseService,
     private authService: AuthService,
     private snackbarService: SnackbarService
@@ -62,7 +64,7 @@ export class PostService {
         const posts = response.data as unknown as Post[];
         posts.forEach((post) => {
           if (post.profile.avatarUrl) {
-            post.profile.avatarUrl = this.supabase.getFullStorageUrl(
+            post.profile.avatarUrl = this.fileService.getPublicUrl(
               BUCKETS.AVATARS,
               post.profile.avatarUrl
             );

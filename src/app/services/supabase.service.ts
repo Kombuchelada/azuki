@@ -7,8 +7,6 @@ import {
 import { from, Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Profile } from '../models/profile.model';
-import { BUCKETS } from '../constants/buckets.constant';
-import { StorageError, FileObject } from '@supabase/storage-js';
 import { TABLES } from '../constants/tables.constant';
 
 @Injectable({
@@ -41,49 +39,5 @@ export class SupabaseService {
     };
 
     return from(this.client.from(TABLES.PROFILES).upsert(update));
-  }
-
-  downloadFile(bucket: BUCKETS, path: string) {
-    return from(this.client.storage.from(bucket).download(path));
-  }
-
-  uploadFile(
-    bucket: BUCKETS,
-    filePath: string,
-    file: File
-  ): Observable<
-    | {
-        data: {
-          path: string;
-        };
-        error: null;
-      }
-    | {
-        data: null;
-        error: StorageError;
-      }
-  > {
-    return from(this.client.storage.from(bucket).upload(filePath, file));
-  }
-
-  deleteFiles(
-    bucket: BUCKETS,
-    filePaths: string[]
-  ): Observable<
-    | {
-        data: FileObject[];
-        error: null;
-      }
-    | {
-        data: null;
-        error: StorageError;
-      }
-  > {
-    return from(this.client.storage.from(bucket).remove(filePaths));
-  }
-
-  getFullStorageUrl(bucketName: BUCKETS, path: string): string {
-    return this.client.storage.from(bucketName).getPublicUrl(path).data
-      .publicUrl;
   }
 }

@@ -15,7 +15,6 @@ import {
   filter,
   tap,
   Observable,
-  forkJoin,
 } from 'rxjs';
 import { Profile } from '../models/profile.model';
 import { SupabaseService } from '../services/supabase.service';
@@ -33,10 +32,10 @@ import { MatInputModule } from '@angular/material/input';
 import { SNACKBAR_MESSAGES } from '../constants/snackbar-messsages.constant';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ImageUploadComponent } from '../image-upload/image-upload.component';
-import { HTTP_STATUS_CODES } from '../constants/http-status-codes.constant';
 import { SnackbarService } from '../services/snackbar.service';
 import { BUCKETS } from '../constants/buckets.constant';
 import { AuthService } from '../services/auth.service';
+import { FileService } from '../services/file.service';
 
 @Component({
   selector: 'app-account-edit',
@@ -100,28 +99,9 @@ export class AccountEditComponent {
       return true;
     }),
     switchMap(() => this.updateAvatar()),
-    map((uploadResult) => {
-      if (uploadResult) {
-        const fileName = uploadResult[0].fileName;
-        const uploadResponse = uploadResult[1];
-        if (uploadResponse.error) {
-          //there is an error in the supabase typing. the error object has a
-          //status code.
-          const statusCode = (
-            uploadResponse.error as unknown as { statusCode: string }
-          ).statusCode;
-          if (statusCode === HTTP_STATUS_CODES.CONFLICT_409) {
-            this.avatarUrl.setValue(fileName);
-          } else {
-            this.snackbarService.customError(
-              `${SNACKBAR_MESSAGES.IMAGE_UPLOAD_FAILED}: ${uploadResponse.error}`
-            );
-          }
-        }
-        if (uploadResponse?.data?.path) {
-          this.avatarUrl.setValue(uploadResponse.data.path);
-          return;
-        }
+    map((path) => {
+      if (path) {
+        this.avatarUrl.setValue(path);
       }
     }),
     switchMap(() => this.submitForm()),
@@ -141,6 +121,7 @@ export class AccountEditComponent {
 
   constructor(
     private supabase: SupabaseService,
+    private fileService: FileService,
     private authService: AuthService,
     private snackbarService: SnackbarService
   ) {
@@ -207,9 +188,6 @@ export class AccountEditComponent {
     const file = this.avatarFile.value;
     const fileExt = file.name.split('.').pop();
     const fileName = `public/${profile.id}.${fileExt}`;
-    return forkJoin([
-      of({ fileName: fileName }),
-      this.supabase.uploadFile(BUCKETS.AVATARS, fileName, file),
-    ]);
+    return this.fileService.upload(BUCKETS.AVATARS, fileName, file);
   }
 }
