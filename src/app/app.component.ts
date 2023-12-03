@@ -7,7 +7,7 @@ import { ToolbarComponent } from './toolbar/toolbar.component';
   selector: 'app-root',
   standalone: true,
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css'],
+  styleUrls: ['./app.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, RouterOutlet, ToolbarComponent],
 })
