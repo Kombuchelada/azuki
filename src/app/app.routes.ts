@@ -16,7 +16,7 @@ export const routes: Routes = [
   {
     path: 'register',
     loadComponent() {
-      return import('./signup-component/signup-component.component').then((mod) => mod.SignupComponentComponent)
+      return import('./signup-component/signup.component').then((mod) => mod.SignupComponent)
     },
   },
   {

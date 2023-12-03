@@ -29,10 +29,10 @@ import { AuthResponse } from '@supabase/supabase-js';
     MatIconModule,
     MatButtonModule,
   ],
-  templateUrl: './signup-component.component.html',
+  templateUrl: './signup-component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SignupComponentComponent {
+export class SignupComponent {
 
   signupForm = new FormGroup({
     "email" : new FormControl('', {
