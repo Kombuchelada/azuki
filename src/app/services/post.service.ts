@@ -7,22 +7,27 @@ import { SnackbarService } from './snackbar.service';
 import { Post } from '../models/post.model';
 import { BUCKETS } from '../constants/buckets.constant';
 import { RESPONSE_ERRORS } from '../constants/response.constant';
+import { AuthService } from './auth.service';
+import { FileService } from './file.service';
 
 @Injectable({
   providedIn: 'root',
 })
-export class PostService {
+export class PostService extends SupabaseService {
   constructor(
-    private supabase: SupabaseService,
+    private fileService: FileService,
+    private authService: AuthService,
     private snackbarService: SnackbarService
-  ) {}
+  ) {
+    super();
+  }
 
   createPost(post: {
     title: string;
     content: string;
     author_id?: string;
   }): Observable<PostgrestSingleResponse<null> | null> {
-    return this.supabase.session.pipe(
+    return this.authService.session$.pipe(
       map((session) => {
         if (!session) {
           throw new Error(RESPONSE_ERRORS.SESSION_NULL);
@@ -31,13 +36,13 @@ export class PostService {
       }),
       switchMap((session) => {
         post.author_id = session.user.id;
-        return from(this.supabase.client.from(TABLES.POSTS).insert(post));
+        return from(this.client.from(TABLES.POSTS).insert(post));
       })
     );
   }
 
   getRecentPosts(numberOfPosts = 10): Observable<Post[]> {
-    const query = this.supabase.client
+    const query = this.client
       .from(TABLES.POSTS)
       .select(
         'id, createdAt:created_at, title, content, profile:author_id(username, fullName:full_name, avatarUrl:avatar_url)'
@@ -60,7 +65,7 @@ export class PostService {
         const posts = response.data as unknown as Post[];
         posts.forEach((post) => {
           if (post.profile.avatarUrl) {
-            post.profile.avatarUrl = this.supabase.getFullStorageUrl(
+            post.profile.avatarUrl = this.fileService.getPublicUrl(
               BUCKETS.AVATARS,
               post.profile.avatarUrl
             );

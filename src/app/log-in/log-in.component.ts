@@ -21,7 +21,6 @@ import {
   take,
   tap,
 } from 'rxjs';
-import { SupabaseService } from '../services/supabase.service';
 import { AuthTokenResponse } from '@supabase/supabase-js';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { LoadingDialogComponent } from '../loading-dialog/loading-dialog.component';
@@ -30,6 +29,7 @@ import { LOADING_DIALOG } from '../constants/loading-dialog.constant';
 import { Router } from '@angular/router';
 import { ROUTES } from '../constants/routes.constant';
 import { SnackbarService } from '../services/snackbar.service';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-log-in',
@@ -98,7 +98,7 @@ export class LogInComponent {
   dialogRef!: MatDialogRef<LoadingDialogComponent>;
 
   constructor(
-    private supabase: SupabaseService,
+    private authService: AuthService,
     private dialog: MatDialog,
     private snackbarService: SnackbarService,
     private router: Router
@@ -111,7 +111,7 @@ export class LogInComponent {
       return of(null);
     }
     const { email, password } = this.logInForm.getRawValue();
-    return this.supabase
+    return this.authService
       .logIn(email as string, password as string)
       .pipe(take(1));
   }

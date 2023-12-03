@@ -13,12 +13,12 @@ import {
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { TEMPLATE_STRINGS } from '../constants/template.constant';
-import { SupabaseService } from '../services/supabase.service';
 import { BUCKETS } from '../constants/buckets.constant';
 import { MatIconModule } from '@angular/material/icon';
-import { map, take } from 'rxjs';
+import { catchError, map, of, take } from 'rxjs';
 import { SnackbarService } from '../services/snackbar.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { FileService } from '../services/file.service';
 
 @Component({
   selector: 'app-image-upload',
@@ -49,7 +49,7 @@ export class ImageUploadComponent implements OnChanges {
   loading = signal(true);
 
   constructor(
-    private supabase: SupabaseService,
+    private fileService: FileService,
     private snackbarService: SnackbarService
   ) {}
 
@@ -76,18 +76,18 @@ export class ImageUploadComponent implements OnChanges {
   }
 
   deleteImage(): void {
-    this.supabase
-      .deleteFiles(BUCKETS.AVATARS, [this.avatarUrl])
+    this.fileService
+      .delete(BUCKETS.AVATARS, [this.avatarUrl])
       .pipe(
         take(1),
-        map((response) => {
-          if (!response.error) {
-            this.fileSelected.emit(null);
-            this.imageExists.set(false);
-            this.avatarUrl = '';
-          } else {
-            this.snackbarService.customError(response.error.message);
-          }
+        map(() => {
+          this.fileSelected.emit(null);
+          this.imageExists.set(false);
+          this.avatarUrl = '';
+        }),
+        catchError((error) => {
+          this.snackbarService.customError(error);
+          return of(null);
         })
       )
       .subscribe();
@@ -103,7 +103,7 @@ export class ImageUploadComponent implements OnChanges {
       return;
     }
     this.imageExists.set(true);
-    this.filePreview.nativeElement.src = this.supabase.getFullStorageUrl(
+    this.filePreview.nativeElement.src = this.fileService.getPublicUrl(
       BUCKETS.AVATARS,
       this.avatarUrl
     );
