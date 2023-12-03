@@ -1,0 +1,30 @@
+<div class="flex justify-around items-center image-icon-size">
+  @if(!(publicAvatarUrl.length > 0 )){
+  <mat-icon class="image-icon-size">account_circle</mat-icon>
+  } @else {
+  <div
+    class="relative"
+    [ngClass]="publicAvatarUrl.length > 0 && !loading() ? '' : 'hidden'"
+  >
+    <img
+      [src]="publicAvatarUrl"
+      alt="avatar preview"
+      class="clip-path-circle"
+      width="250px"
+      (load)="loading.set(false)"
+    />
+    <button
+      class="absolute edit-avatar-fab"
+      mat-mini-fab
+      color="accent"
+      aria-label="Edit Avatar"
+      type="button"
+      (click)="showEditDialog()"
+    >
+      <mat-icon>edit</mat-icon>
+    </button>
+  </div>
+  @if(loading()){
+  <mat-spinner></mat-spinner>
+  } }
+</div>

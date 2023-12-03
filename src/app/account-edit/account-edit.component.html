@@ -1,10 +1,6 @@
 <h1>Edit Account</h1>
 <form [formGroup]="profileForm" (ngSubmit)="submitting$.next(true)">
   <div class="flex gap-5 flex-wrap items-start">
-    <app-image-upload
-      (fileSelected)="avatarFile.setValue($event)"
-      [avatarUrl]="avatarUrl.value"
-    ></app-image-upload>
     <div class="grow">
       <mat-form-field class="w-full">
         <mat-label for="fullName">Full Name</mat-label>
@@ -35,6 +31,7 @@
         }
       </mat-form-field>
     </div>
+    <app-profile-picture [profile]="profile()"></app-profile-picture>
   </div>
   <div class="flex w-full justify-end">
     <button mat-raised-button color="primary" type="submit" class="mt-4">

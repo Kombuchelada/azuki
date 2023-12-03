@@ -21,16 +21,16 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { SNACKBAR_MESSAGES } from '../constants/snackbar-messsages.constant';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ImageUploadComponent } from '../image-upload/image-upload.component';
 import { SnackbarService } from '../services/snackbar.service';
-import { BUCKETS } from '../constants/buckets.constant';
 import { AuthService } from '../services/auth.service';
-import { FileService } from '../services/file.service';
 import { ProfileService } from '../services/profile.service';
+import { ProfilePictureComponent } from '../profile-picture/profile-picture.component';
 
 @Component({
   selector: 'app-account-edit',
   standalone: true,
+  templateUrl: './account-edit.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -38,25 +38,19 @@ import { ProfileService } from '../services/profile.service';
     MatInputModule,
     MatIconModule,
     MatButtonModule,
-    ImageUploadComponent,
+    ProfilePictureComponent,
   ],
-  templateUrl: './account-edit.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AccountEditComponent {
   @ViewChild('avatarPreview') avatarPreview!: ElementRef<HTMLImageElement>;
   profile = signal<Profile | null>(null);
   session = signal<Session | null>(null);
 
-  //this only has 1 control right now but that will likely change,
-  //so I'm leaving it as a formgroup
   profileForm = new FormGroup({
     fullName: new FormControl('', [
       Validators.required,
       Validators.maxLength(255),
     ]),
-    avatarUrl: new FormControl<string>('', { nonNullable: true }),
-    avatarFile: new FormControl<File | null>(null),
     bio: new FormControl<string>('', {
       nonNullable: true,
       validators: Validators.maxLength(4000),
@@ -65,14 +59,6 @@ export class AccountEditComponent {
 
   get fullName(): FormControl<string | null> {
     return this.profileForm.controls.fullName;
-  }
-
-  get avatarUrl(): FormControl<string> {
-    return this.profileForm.controls.avatarUrl;
-  }
-
-  get avatarFile(): FormControl<File | null> {
-    return this.profileForm.controls.avatarFile;
   }
 
   get bio(): FormControl<string> {
@@ -89,12 +75,6 @@ export class AccountEditComponent {
       }
       return true;
     }),
-    switchMap(() => this.updateAvatar()),
-    map((path) => {
-      if (path) {
-        this.avatarUrl.setValue(path);
-      }
-    }),
     switchMap(() => this.submitForm()),
     tap(() => this.submitting$.next(false)),
     map(() => this.snackbarService.show(SNACKBAR_MESSAGES.PROFILE_UPDATED))
@@ -102,7 +82,6 @@ export class AccountEditComponent {
 
   constructor(
     private profileService: ProfileService,
-    private fileService: FileService,
     private authService: AuthService,
     private snackbarService: SnackbarService
   ) {
@@ -122,26 +101,13 @@ export class AccountEditComponent {
             this.profile.set(profile);
             this.fullName.setValue(profile.full_name);
             this.bio.setValue(profile.bio);
-            if (profile.avatar_url) {
-              this.avatarUrl.setValue(profile.avatar_url);
-            }
             this.profileForm.enable();
           }
-          return of(null);
         })
       )
       .subscribe();
 
     this.submitForm$.pipe(takeUntilDestroyed()).subscribe();
-  }
-
-  fileSelected(newFile: File): void {
-    if (newFile) {
-      this.avatarFile.setValue(newFile);
-      return;
-    }
-    this.avatarFile.setValue(null);
-    this.avatarUrl.setValue('');
   }
 
   private submitForm(): Observable<void> {
@@ -150,25 +116,7 @@ export class AccountEditComponent {
       return of();
     }
     newProfile.full_name = this.fullName.value as string;
-    newProfile.avatar_url = this.avatarUrl.value as string;
     newProfile.bio = this.bio.value as string;
     return this.profileService.put(newProfile);
-  }
-
-  private updateAvatar() {
-    const profile = this.profile();
-    if (!profile || !profile.id) {
-      return of(null);
-    }
-
-    if (!this.avatarFile.value) {
-      this.avatarUrl.setValue('');
-      return of(null);
-    }
-
-    const file = this.avatarFile.value;
-    const fileExt = file.name.split('.').pop();
-    const fileName = `public/${profile.id}.${fileExt}`;
-    return this.fileService.upload(BUCKETS.AVATARS, fileName, file);
   }
 }

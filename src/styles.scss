@@ -7,12 +7,28 @@ body {
   margin: 0;
 }
 
+.hidden {
+  display: none;
+}
+
 .grid {
   display: grid;
 }
 
 .flex {
   display: flex;
+}
+
+.relative {
+  position: relative;
+}
+
+.absolute {
+  position: absolute;
+}
+
+.fixed {
+  position: fixed;
 }
 
 .flex-col {
