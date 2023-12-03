@@ -10,7 +10,7 @@ import { Profile } from '../models/profile.model';
 export class ProfileService {
   constructor(private supabase: SupabaseService) {}
 
-  get(id: string): Observable<Profile> {
+  getOne(id: string): Observable<Profile> {
     return from(
       this.supabase.client
         .from(TABLES.PROFILES)
@@ -23,16 +23,21 @@ export class ProfileService {
     );
   }
 
-  // put(profile: Profile) {
+  put(profile: Profile): Observable<void> {
+    const update = {
+      ...profile,
+      updated_at: new Date(),
+    };
 
-  // }
-
-  // updateProfile(profile: Profile): Observable<PostgrestSingleResponse<null>> {
-  //   const update = {
-  //     ...profile,
-  //     updated_at: new Date(),
-  //   };
-
-  //   return from(this.client.from(TABLES.PROFILES).upsert(update));
-  // }
+    return from(
+      this.supabase.client
+        .from(TABLES.PROFILES)
+        .upsert(update)
+        .then((response) => {
+          if (response.error) {
+            throw new Error(response.error.message);
+          }
+        })
+    );
+  }
 }

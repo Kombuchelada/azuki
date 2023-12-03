@@ -38,7 +38,6 @@ export class ToolbarComponent {
       .pipe(
         takeUntilDestroyed(),
         map((session) => {
-          console.log(session);
           if (session) {
             this.username.set(
               session.user.user_metadata[USER_METADATA.USERNAME]
