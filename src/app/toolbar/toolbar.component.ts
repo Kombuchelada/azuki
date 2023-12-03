@@ -5,13 +5,14 @@ import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
-import { SupabaseService } from '../services/supabase.service';
 import { map, take } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SNACKBAR_MESSAGES } from '../constants/snackbar-messsages.constant';
 import { SNACKBAR_ACTIONS } from '../constants/snackbar-actions.constant';
 import { SNACKBAR_DURATIONS } from '../constants/snackbar-durations.constant';
 import { USER_METADATA } from '../constants/user-metadata-properties.constant';
+import { AuthService } from '../services/auth.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-toolbar',
@@ -32,34 +33,20 @@ export class ToolbarComponent {
   loggedIn = signal(false);
   username = signal('');
 
-  constructor(
-    private supabase: SupabaseService,
-    private snackbar: MatSnackBar
-  ) {
-    this.supabase.authChanges((authEvent) => {
-      switch (authEvent) {
-        case 'SIGNED_IN':
-          this.loggedIn.set(true);
-          break;
-        case 'SIGNED_OUT':
-          this.loggedIn.set(false);
-          break;
-      }
-      this.updateSession();
-    });
-  }
-
-  private updateSession(): void {
-    this.supabase.session
+  constructor(private authService: AuthService, private snackbar: MatSnackBar) {
+    this.authService.session$
       .pipe(
-        take(1),
+        takeUntilDestroyed(),
         map((session) => {
+          console.log(session);
           if (session) {
             this.username.set(
               session.user.user_metadata[USER_METADATA.USERNAME]
             );
+            this.loggedIn.set(true);
           } else {
             this.username.set('');
+            this.loggedIn.set(false);
           }
         })
       )
@@ -67,8 +54,8 @@ export class ToolbarComponent {
   }
 
   logOut(): void {
-    this.supabase
-      .signOut()
+    this.authService
+      .logOut()
       .pipe(
         take(1),
         map((result) => {

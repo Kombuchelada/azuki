@@ -36,6 +36,7 @@ import { ImageUploadComponent } from '../image-upload/image-upload.component';
 import { HTTP_STATUS_CODES } from '../constants/http-status-codes.constant';
 import { SnackbarService } from '../services/snackbar.service';
 import { BUCKETS } from '../constants/buckets.constant';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-account-edit',
@@ -140,10 +141,11 @@ export class AccountEditComponent {
 
   constructor(
     private supabase: SupabaseService,
+    private authService: AuthService,
     private snackbarService: SnackbarService
   ) {
     this.profileForm.disable();
-    this.supabase.session
+    this.authService.session$
       .pipe(
         take(1),
         switchMap((session) => {

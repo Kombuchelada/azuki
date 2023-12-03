@@ -1,12 +1,7 @@
 import { Injectable } from '@angular/core';
 import {
-  AuthChangeEvent,
-  AuthError,
-  AuthSession,
-  AuthTokenResponse,
   createClient,
   PostgrestSingleResponse,
-  Session,
   SupabaseClient,
 } from '@supabase/supabase-js';
 import { from, Observable } from 'rxjs';
@@ -21,20 +16,11 @@ import { TABLES } from '../constants/tables.constant';
 })
 export class SupabaseService {
   client: SupabaseClient;
-  _session: AuthSession | null = null;
 
   constructor() {
     this.client = createClient(
       environment.supabaseUrl,
       environment.supabaseKey
-    );
-  }
-
-  get session(): Observable<AuthSession | null> {
-    return from(
-      this.client.auth.getSession().then(({ data }) => {
-        return data.session;
-      })
     );
   }
 
@@ -46,20 +32,6 @@ export class SupabaseService {
         .eq('id', id)
         .single()
     );
-  }
-
-  authChanges(
-    callback: (event: AuthChangeEvent, session: Session | null) => void
-  ) {
-    return this.client.auth.onAuthStateChange(callback);
-  }
-
-  logIn(email: string, password: string): Observable<AuthTokenResponse> {
-    return from(this.client.auth.signInWithPassword({ email, password }));
-  }
-
-  signOut(): Observable<{ error: AuthError | null }> {
-    return from(this.client.auth.signOut());
   }
 
   updateProfile(profile: Profile): Observable<PostgrestSingleResponse<null>> {

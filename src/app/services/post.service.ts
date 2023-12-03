@@ -7,6 +7,7 @@ import { SnackbarService } from './snackbar.service';
 import { Post } from '../models/post.model';
 import { BUCKETS } from '../constants/buckets.constant';
 import { RESPONSE_ERRORS } from '../constants/response.constant';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root',
@@ -14,6 +15,7 @@ import { RESPONSE_ERRORS } from '../constants/response.constant';
 export class PostService {
   constructor(
     private supabase: SupabaseService,
+    private authService: AuthService,
     private snackbarService: SnackbarService
   ) {}
 
@@ -22,7 +24,7 @@ export class PostService {
     content: string;
     author_id?: string;
   }): Observable<PostgrestSingleResponse<null> | null> {
-    return this.supabase.session.pipe(
+    return this.authService.session$.pipe(
       map((session) => {
         if (!session) {
           throw new Error(RESPONSE_ERRORS.SESSION_NULL);

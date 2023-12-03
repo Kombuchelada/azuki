@@ -5,6 +5,7 @@ import { Profile } from '../models/profile.model';
 import { map, of, switchMap } from 'rxjs';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { RouterLink } from '@angular/router';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-account',
@@ -16,8 +17,11 @@ import { RouterLink } from '@angular/router';
 export class AccountComponent {
   profile = signal<Profile | null>(null);
 
-  constructor(private supabase: SupabaseService) {
-    this.supabase.session
+  constructor(
+    private supabase: SupabaseService,
+    private authService: AuthService
+  ) {
+    this.authService.session$
       .pipe(
         switchMap((session) => {
           if (session) {
