@@ -13,13 +13,14 @@ import { FileService } from './file.service';
 @Injectable({
   providedIn: 'root',
 })
-export class PostService {
+export class PostService extends SupabaseService {
   constructor(
     private fileService: FileService,
-    private supabase: SupabaseService,
     private authService: AuthService,
     private snackbarService: SnackbarService
-  ) {}
+  ) {
+    super();
+  }
 
   createPost(post: {
     title: string;
@@ -35,13 +36,13 @@ export class PostService {
       }),
       switchMap((session) => {
         post.author_id = session.user.id;
-        return from(this.supabase.client.from(TABLES.POSTS).insert(post));
+        return from(this.client.from(TABLES.POSTS).insert(post));
       })
     );
   }
 
   getRecentPosts(numberOfPosts = 10): Observable<Post[]> {
-    const query = this.supabase.client
+    const query = this.client
       .from(TABLES.POSTS)
       .select(
         'id, createdAt:created_at, title, content, profile:author_id(username, fullName:full_name, avatarUrl:avatar_url)'

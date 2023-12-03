@@ -5,7 +5,7 @@ import { environment } from 'src/environments/environment';
 @Injectable({
   providedIn: 'root',
 })
-export class SupabaseService {
+export abstract class SupabaseService {
   client: SupabaseClient;
 
   constructor() {

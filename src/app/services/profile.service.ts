@@ -7,12 +7,10 @@ import { Profile } from '../models/profile.model';
 @Injectable({
   providedIn: 'root',
 })
-export class ProfileService {
-  constructor(private supabase: SupabaseService) {}
-
+export class ProfileService extends SupabaseService {
   getOne(id: string): Observable<Profile> {
     return from(
-      this.supabase.client
+      this.client
         .from(TABLES.PROFILES)
         .select(`id, username, full_name, avatar_url, bio`)
         .eq('id', id)
@@ -30,7 +28,7 @@ export class ProfileService {
     };
 
     return from(
-      this.supabase.client
+      this.client
         .from(TABLES.PROFILES)
         .upsert(update)
         .then((response) => {

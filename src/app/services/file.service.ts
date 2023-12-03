@@ -7,12 +7,10 @@ import { FileObject } from '@supabase/storage-js';
 @Injectable({
   providedIn: 'root',
 })
-export class FileService {
-  constructor(private supabase: SupabaseService) {}
-
+export class FileService extends SupabaseService {
   download(bucket: BUCKETS, path: string): Observable<Blob> {
     return from(
-      this.supabase.client.storage
+      this.client.storage
         .from(bucket)
         .download(path)
         .then((response) => {
@@ -30,7 +28,7 @@ export class FileService {
    */
   upload(bucket: BUCKETS, path: string, file: File): Observable<string> {
     return from(
-      this.supabase.client.storage
+      this.client.storage
         .from(bucket)
         .upload(path, file)
         .then((response) => {
@@ -45,7 +43,7 @@ export class FileService {
 
   delete(bucket: BUCKETS, paths: string[]): Observable<FileObject[]> {
     return from(
-      this.supabase.client.storage
+      this.client.storage
         .from(bucket)
         .remove(paths)
         .then((response) => {
@@ -59,7 +57,6 @@ export class FileService {
   }
 
   getPublicUrl(bucket: BUCKETS, path: string): string {
-    return this.supabase.client.storage.from(bucket).getPublicUrl(path).data
-      .publicUrl;
+    return this.client.storage.from(bucket).getPublicUrl(path).data.publicUrl;
   }
 }
