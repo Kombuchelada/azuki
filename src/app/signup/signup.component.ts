@@ -2,19 +2,16 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SupabaseService } from '../services/supabase.service';
 import {
-  Form,
   FormControl,
   FormGroup,
   ReactiveFormsModule,
-  Validators,
+  Validators
 } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { Subject, tap, filter, map, switchMap, Observable, take } from 'rxjs';
-import { Router } from '@angular/router';
-import { ROUTES } from '../constants/routes.constant';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AuthResponse } from '@supabase/supabase-js';
 
@@ -35,11 +32,11 @@ import { AuthResponse } from '@supabase/supabase-js';
 export class SignupComponent {
 
   signupForm = new FormGroup({
-    "email" : new FormControl('', {
-      validators : [Validators.email, Validators.required],
+    "email": new FormControl('', {
+      validators: [Validators.email, Validators.required],
       updateOn: 'blur'
     }),
-    "password" : new FormControl('', Validators.required)
+    "password": new FormControl('', [Validators.required, Validators.minLength(12)])
   });
 
   get email(): FormControl<string | null> {
@@ -79,13 +76,12 @@ export class SignupComponent {
 
   constructor(
     private supabase: SupabaseService,
-    private router: Router
   ) {
     this.signUp$.pipe(takeUntilDestroyed()).subscribe();
   }
 
   private register(): Observable<AuthResponse> {
-    const {email, password } = this.signupForm.getRawValue();
+    const { email, password } = this.signupForm.getRawValue();
     return this.supabase.registerUser(email as string, password as string).pipe(take(1));
   }
 }
