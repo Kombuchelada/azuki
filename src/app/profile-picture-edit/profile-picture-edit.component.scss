@@ -19,9 +19,9 @@
   transition-duration: 1s;
 }
 
-.dialog-content > * > * {
-  padding: 0 1rem 0 1rem;
-}
+// .dialog-content > * > * {
+//   padding: 0 1rem 0 1rem;
+// }
 
 .hidden-right {
   right: -25rem;
@@ -41,4 +41,8 @@
 
 image-cropper {
   width: unset;
+}
+
+.w-90 {
+  width: 90%;
 }

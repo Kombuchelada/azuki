@@ -43,6 +43,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 export class ProfilePictureEditComponent {
   @ViewChild('profilePic') profilePic!: ElementRef<HTMLDivElement>;
   @ViewChild('cropper') cropper!: ElementRef<HTMLDivElement>;
+  @ViewChild('confirm') confirm!: ElementRef<HTMLDivElement>;
   loading = signal(true);
   imageChangedEvent: any = '';
   croppedImage: any = '';
@@ -86,6 +87,15 @@ export class ProfilePictureEditComponent {
       this.cropper.nativeElement.classList.add('unhidden');
     }, 100);
   }
+
+  showConfirmation(): void {
+    this.confirm.nativeElement.classList.remove('hidden');
+    setTimeout(() => {
+      this.cropper.nativeElement.classList.add('hidden-left');
+      this.confirm.nativeElement.classList.add('unhidden');
+    }, 100);
+  }
+
   cropperReady() {
     // cropper ready
   }
