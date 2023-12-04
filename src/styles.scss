@@ -71,6 +71,10 @@ body {
   justify-content: space-between;
 }
 
+.overflow-x-none {
+  overflow-x: none;
+}
+
 //width and height could be added to the
 //loop below, but I haven't needed more than
 //these classes 98% of the time.

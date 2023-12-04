@@ -48,7 +48,7 @@ export class ProfilePictureComponent {
   showEditDialog(): void {
     this.dialogRef = this.dialog.open(ProfilePictureEditComponent, {
       data: this.profile,
-      maxWidth: '30rem',
+      maxWidth: '45rem',
     });
   }
 }

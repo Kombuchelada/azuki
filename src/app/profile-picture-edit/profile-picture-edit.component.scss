@@ -1,0 +1,44 @@
+.justify-end {
+  justify-content: end !important;
+}
+
+.dialog-content {
+  height: 25rem;
+  width: 25rem;
+  overflow-x: hidden;
+  padding: 0;
+  position: relative;
+  transition: right 1s;
+}
+
+.dialog-content > * {
+  position: absolute;
+  width: 25rem;
+  height: 25rem;
+  transition-property: right;
+  transition-duration: 1s;
+}
+
+.dialog-content > * > * {
+  padding: 0 1rem 0 1rem;
+}
+
+.hidden-right {
+  right: -25rem;
+}
+
+.unhidden {
+  right: 0;
+}
+
+.hidden-left {
+  right: 25rem;
+}
+
+.hidden {
+  display: none;
+}
+
+image-cropper {
+  width: unset;
+}
