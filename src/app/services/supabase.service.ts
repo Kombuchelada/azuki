@@ -114,4 +114,8 @@ export class SupabaseService {
     return this.client.storage.from(bucketName).getPublicUrl(path).data
       .publicUrl;
   }
+
+  registerUser(username: string, password: string) {
+    return from(this.supabase.auth.signUp({email: username, password: password, options : {data: {"username" : username}}}))
+  }
 }

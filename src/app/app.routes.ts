@@ -14,6 +14,12 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'register',
+    loadComponent() {
+      return import('./signup/signup.component').then((mod) => mod.SignupComponent)
+    },
+  },
+  {
     path: 'log-in',
     loadComponent: () =>
       import('./log-in/log-in.component').then((mod) => mod.LogInComponent),
