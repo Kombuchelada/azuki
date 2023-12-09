@@ -12,85 +12,87 @@
     </button>
   </div>
 </div>
-<div class="dialog-content">
-  <div
-    #profilePic
-    class="profile-pic unhidden flex flex-col gap-4 w-full items-center"
-  >
-    <p class="px-4">The photo that says, "Definitely not a bot!"</p>
-    @if(!(publicAvatarUrl.length > 0 )){
-    <mat-icon class="image-icon-size">account_circle</mat-icon>
-    } @else {
+<div class="flex w-full justify-around">
+  <div class="dialog-content">
     <div
-      class="relative"
-      [ngClass]="publicAvatarUrl.length > 0 && !loading() ? '' : 'hidden'"
+      #profilePic
+      class="profile-pic unhidden flex flex-col gap-4 w-full items-center"
     >
+      <p class="px-4">The photo that says, "Definitely not a bot!"</p>
+      @if(!(publicAvatarUrl.length > 0 )){
+      <mat-icon class="image-icon-size">account_circle</mat-icon>
+      } @else {
+      <div
+        class="relative"
+        [ngClass]="publicAvatarUrl.length > 0 && !loading() ? '' : 'hidden'"
+      >
+        <img
+          [src]="publicAvatarUrl"
+          alt="avatar preview"
+          class="clip-path-circle"
+          width="250px"
+          (load)="loading.set(false)"
+        />
+      </div>
+      @if(loading()){
+      <mat-spinner></mat-spinner>
+      } }
+      <div class="flex gap-2 px-4 grow pb-4 items-end">
+        <button type="button" mat-button color="warn">Delete</button>
+        <button
+          type="button"
+          mat-flat-button
+          color="primary"
+          (click)="fileInput.click()"
+        >
+          Upload a new image
+        </button>
+      </div>
+    </div>
+    <div #cropper class="cropper hidden hidden-right">
+      <div class="mb-4 mx-4">
+        <image-cropper
+          [imageChangedEvent]="imageChangedEvent"
+          [maintainAspectRatio]="true"
+          [aspectRatio]="1"
+          format="png"
+          (imageCropped)="imageCropped($event)"
+          (imageLoaded)="imageLoaded($event)"
+          (cropperReady)="cropperReady()"
+          (loadImageFailed)="loadImageFailed()"
+          [roundCropper]="true"
+        ></image-cropper>
+      </div>
+      <div class="flex w-full justify-around mb-4">
+        <button
+          type="button"
+          mat-flat-button
+          color="primary"
+          (click)="showConfirmation()"
+        >
+          Next
+        </button>
+      </div>
+    </div>
+    <div
+      #confirm
+      class="hidden hidden-right flex flex-col gap-4 w-full items-center"
+    >
+      <h3>Your New Profile Picture</h3>
       <img
-        [src]="publicAvatarUrl"
-        alt="avatar preview"
+        [src]="croppedImage"
+        alt="new profile picture preview"
         class="clip-path-circle"
         width="250px"
-        (load)="loading.set(false)"
       />
-    </div>
-    @if(loading()){
-    <mat-spinner></mat-spinner>
-    } }
-    <div class="flex gap-2 px-4 grow pb-4 items-end">
-      <button type="button" mat-button color="warn">Delete</button>
-      <button
-        type="button"
-        mat-flat-button
-        color="primary"
-        (click)="fileInput.click()"
-      >
-        Upload a new image
-      </button>
-    </div>
-  </div>
-  <div #cropper class="cropper hidden hidden-right">
-    <div class="mb-4 mx-4">
-      <image-cropper
-        [imageChangedEvent]="imageChangedEvent"
-        [maintainAspectRatio]="true"
-        [aspectRatio]="1"
-        format="png"
-        (imageCropped)="imageCropped($event)"
-        (imageLoaded)="imageLoaded($event)"
-        (cropperReady)="cropperReady()"
-        (loadImageFailed)="loadImageFailed()"
-        [roundCropper]="true"
-      ></image-cropper>
-    </div>
-    <div class="flex w-full justify-around mb-4">
-      <button
-        type="button"
-        mat-flat-button
-        color="primary"
-        (click)="showConfirmation()"
-      >
-        Next
-      </button>
-    </div>
-  </div>
-  <div
-    #confirm
-    class="hidden hidden-right flex flex-col gap-4 w-full items-center"
-  >
-    <h3>Your New Profile Picture</h3>
-    <img
-      [src]="croppedImage"
-      alt="new profile picture preview"
-      class="clip-path-circle"
-      width="250px"
-    />
-    <div class="flex gap-2 px-4 grow pb-4 items-end">
-      <button type="button" mat-button (click)="dialogRef.close()">
-        Cancel
-      </button>
-      <button type="button" mat-flat-button color="primary">
-        Save as profile picture
-      </button>
+      <div class="flex gap-2 px-4 grow pb-4 items-end">
+        <button type="button" mat-button (click)="dialogRef.close()">
+          Cancel
+        </button>
+        <button type="button" mat-flat-button color="primary">
+          Save as profile picture
+        </button>
+      </div>
     </div>
   </div>
 </div>

@@ -2,9 +2,14 @@
   justify-content: end !important;
 }
 
+:host {
+  --dialog-height: 80vh;
+  --dialog-width: 80vw;
+}
+
 .dialog-content {
-  height: 25rem;
-  width: 25rem;
+  height: var(--dialog-height);
+  width: var(--dialog-width);
   overflow-x: hidden;
   padding: 0;
   position: relative;
@@ -13,8 +18,8 @@
 
 .dialog-content > * {
   position: absolute;
-  width: 25rem;
-  height: 25rem;
+  width: var(--dialog-width);
+  height: var(--dialog-height);
   transition-property: right;
   transition-duration: 1s;
 }
@@ -24,7 +29,7 @@
 // }
 
 .hidden-right {
-  right: -25rem;
+  right: calc(var(--dialog-width) * -1);
 }
 
 .unhidden {
@@ -32,7 +37,7 @@
 }
 
 .hidden-left {
-  right: 25rem;
+  right: var(--dialog-width);
 }
 
 .hidden {
