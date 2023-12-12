@@ -32,11 +32,11 @@ import { AuthResponse } from '@supabase/supabase-js';
 export class SignupComponent {
 
   signupForm = new FormGroup({
-    "email": new FormControl('', {
+    email: new FormControl('', {
       validators: [Validators.email, Validators.required],
       updateOn: 'blur'
     }),
-    "password": new FormControl('', [Validators.required, Validators.minLength(12)])
+    password: new FormControl('', [Validators.required, Validators.minLength(12)])
   });
 
   get email(): FormControl<string | null> {
