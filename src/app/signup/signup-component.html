@@ -14,6 +14,8 @@
         <input matInput placeholder="Password" class="w-full" type="password" [formControl]="password" id="password" required/>
         @if (password.errors?.['required']) {
             <mat-error> Password is required. </mat-error>
+        } @if (password.errors?.['minlength']) {
+            <mat-error> Password must be at least 12 characters. </mat-error>
         }
     </mat-form-field>
     <button mat-raised-button color="primary" type="submit" class="mt-4">
